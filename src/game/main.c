@@ -10,7 +10,7 @@
 #include <math.h>
 #include <string.h>
 
-#if 1
+#if USE_SDL
 #include <SDL2/SDL.h>
 #endif /* USE_SDL  */
 
@@ -19,17 +19,13 @@
 static s32 gActive = 1;
 
 static chik_vertex_t gVertices[ 3 ] = {
-    { { -1.f, -1.f, 0.f }, { 0.f, 0.f } },
-    { {  1.f, -1.f, 0.f }, { 1.f, 0.f } },
-    { {  0.f,  1.f, 0.f }, { 0.5f, 1.f } }
+    { { -1.f, -1.f, 0.f }, 1.f },
+    { {  1.f, -1.f, 0.f }, 1.f },
+    { {  0.f,  1.f, 0.f }, 1.f }
 };
 
 s32 run( void ) {
-    log_msg( "Hello, world!\n" );
-    log_note( "This is a note.\n" );
-    log_warn( "This is a warning.\n" );
-
-#if 1
+#if USE_SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
         log_error( "Failed to initialize SDL.\n" );
         return 0;
@@ -43,63 +39,16 @@ s32 run( void ) {
         return 0;
     }
 
-    float theta = 0.0f;
-
-    mempool_t *pMempool = mempool_new( 1024 * 1024 );
-
-    if( pMempool == 0 ) {
-        log_error( "Failed to create memory pool.\n" );
-        framework_shutdown();
-        return 0;
-    }
-
-    char *pStr = mempool_alloc( pMempool, 64 );
-    strcpy( pStr, "Hello, world!" );
-
-    log_msg( "Allocated string: %s\n", pStr );
-
-    resource_t *pResource = resource_new( 1024 * 1024 );
-
-    if( pResource == 0 ) {
-        log_error( "Failed to create resource manager.\n" );
-        framework_shutdown();
-        return 0;
-    }
-
-    handle_t resource = resource_add( pResource, pStr, strlen( pStr ) + 1 );
-
-    if( resource == 0 ) {
-        log_error( "Failed to add resource to resource manager.\n" );
-        framework_shutdown();
-        return 0;
-    }
-
-    char *pStr2 = resource_get( pResource, resource );
-
-    if( pStr2 == 0 ) {
-        log_error( "Failed to get resource from resource manager.\n" );
-        framework_shutdown();
-        return 0;
-    }
-
-    log_msg( "Retrieved string: %s\n", pStr2 );
-    log_msg( "Resource size = %d\n", HANDLE_GET_SIZE( resource ) );
-
-    mempool_destroy( pMempool );
-
-    resource_destroy( pResource );
-
     handle_t handle = create_vertex_buffer( gVertices, 3 );
     handle_t camera = create_camera();
 
-    set_camera_position( camera, ( vec3_t ){ 0.f, 0.f, -5.f } );
     set_camera( camera );
 
     vec3_t position  = { 0.f, 0.f, 0.f };
     vec2_t direction = { 0.f, 0.f };
 
     while ( gActive ) {
-#if 1
+#if USE_SDL
         while ( SDL_PollEvent( &e ) ) {
             if ( e.type == SDL_QUIT ) {
                 gActive = 0;
@@ -143,13 +92,6 @@ s32 run( void ) {
             }
         }
 #endif /* USE_SDL  */
-        /*draw_triangle( ( vec2_t ){ cos( theta ) / 2, sin( theta ) / 2 }, 
-                       ( vec2_t ){ cos( theta + 6.28 / 3 ) / 2, sin( theta + 6.28 / 3 ) / 2 }, 
-                       ( vec2_t ){ cos( theta + 2 * 6.28 / 3 ) / 2, sin( theta + 2 * 6.28 / 3 ) / 2 } );*/
-    
-        /*draw_triangle( ( vec2_t ){ -.5, -.5 }, 
-                       ( vec2_t ){ .5, -.5 }, 
-                       ( vec2_t ){ 0, theta } );*/
         draw_vertex_buffer( handle );
 
         set_camera_position( camera, position );
@@ -158,8 +100,6 @@ s32 run( void ) {
         draw_frame();
 
         SDL_Delay( 1000 / 144 );
-        theta += 0.01f;
-        //log_note( "Theta: %f\n", theta );
     }
 
 #if USE_SDL
