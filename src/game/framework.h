@@ -17,11 +17,63 @@ extern void ( *draw_frame )( void );
 /*
  *    Draws a triangle to the screen.
  *
- *    @param chik_vec2_t    The first point of the triangle.
- *    @param chik_vec2_t    The second point of the triangle.
- *    @param chik_vec2_t    The third point of the triangle.
+ *    @param vec3_t    The first point of the triangle.
+ *    @param vec3_t    The second point of the triangle.
+ *    @param vec3_t    The third point of the triangle.
  */
-extern void ( *draw_triangle )( chik_vec2_t a, chik_vec2_t b, chik_vec2_t c );
+extern void ( *draw_triangle )( vec3_t a, vec3_t b, vec3_t c );
+/*
+ *    Creates a camera.
+ *
+ *    @return handle_t          The handle to the camera.
+ */
+extern handle_t ( *create_camera )( void );
+
+/*
+ *    Sets camera position.
+ *
+ *    @param handle_t           The handle to the camera.
+ *    @param vec3_t             The position of the camera.
+ */
+extern void ( *set_camera_position )( handle_t sCamera, vec3_t sPosition );
+/*
+ *    Sets camera direction.
+ *
+ *    @param handle_t           The handle to the camera.
+ *    @param vec2_t             The direction of the camera.
+ */
+extern void ( *set_camera_direction )( handle_t sCamera, vec2_t sDirection );
+
+/*
+ *    Sets camera FOV.
+ *
+ *    @param handle_t           The handle to the camera.
+ *    @param float              The FOV of the camera.
+ */
+extern void ( *set_camera_fov )( handle_t sCamera, float sFov );
+
+/*
+ *    Sets the global camera.
+ *
+ *    @param handle_t           The handle to the camera.
+ */
+extern void ( *set_camera )( handle_t sCamera );
+/*
+ *    Creates a vertex buffer.
+ *
+ *    @param chik_vertex_t *    The array of vertices to store in the buffer.
+ *    @param u32                The number of vertices in the array.
+ * 
+ *    @return handle_t          The handle to the vertex buffer.
+ */
+extern handle_t ( *create_vertex_buffer )( chik_vertex_t *spVertices, u32 sCount );
+
+/*
+ *    Draws a vertex buffer.
+ *
+ *    @param handle_t          The handle to the vertex buffer.
+ */
+extern void ( *draw_vertex_buffer )( handle_t sBuffer );
 
 /*
  *    Initialize all functions used in the engine.
