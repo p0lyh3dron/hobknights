@@ -30,6 +30,7 @@ s32 run( void ) {
         log_error( "Failed to initialize SDL.\n" );
         return 0;
     }
+    SDL_SetRelativeMouseMode( SDL_TRUE );
     SDL_Event e;
 #endif /* USE_SDL  */
 
@@ -44,53 +45,60 @@ s32 run( void ) {
 
     set_camera( camera );
 
-    vec3_t position  = { 0.f, 0.f, 0.f };
+    vec3_t position  = { 0.f, 0.f, -10.f };
     vec2_t direction = { 0.f, 0.f };
 
     while ( gActive ) {
 #if USE_SDL
-        while ( SDL_PollEvent( &e ) ) {
-            if ( e.type == SDL_QUIT ) {
-                gActive = 0;
-            }
-            if ( e.type == SDL_KEYDOWN ) {
-                if ( e.key.keysym.sym == SDLK_ESCAPE ) {
-                    gActive = 0;
-                }
-                if ( e.key.keysym.sym == SDLK_UP ) {
-                    direction.x -= 0.06f;
-                }
-                if ( e.key.keysym.sym == SDLK_DOWN ) {
-                    direction.x += 0.06f;
-                }
-                if ( e.key.keysym.sym == SDLK_LEFT ) {
-                    direction.y -= 0.06f;
-                }
-                if ( e.key.keysym.sym == SDLK_RIGHT ) {
-                    direction.y += 0.06f;
-                }
-
-                if ( e.key.keysym.sym == SDLK_w ) {
-                    position.z -= 1.f;
-                }
-                if ( e.key.keysym.sym == SDLK_s ) {
-                    position.z += 1.f;
-                }
-                if ( e.key.keysym.sym == SDLK_a ) {
-                    position.x -= 1.f;
-                }
-                if ( e.key.keysym.sym == SDLK_d ) {
-                    position.x += 1.f;
-                }
-
-                if ( e.key.keysym.sym == SDLK_SPACE ) {
-                    position.y += 1.f;
-                }
-                if ( e.key.keysym.sym == SDLK_LCTRL ) {
-                    position.y -= 1.f;
-                }
-            }
+    SDL_PumpEvents();
+    const char *keys = SDL_GetKeyboardState( NULL );
+    if( keys[ SDL_SCANCODE_ESCAPE ] ) {
+        gActive = 0;
+    }
+    if( keys[ SDL_SCANCODE_W ] ) {
+        position.z += 0.1f * cosf( direction.y );
+        position.x -= 0.1f * sinf( direction.y );
+    }
+    if( keys[ SDL_SCANCODE_S ] ) {
+        position.z -= 0.1f * cosf( direction.y );
+        position.x += 0.1f * sinf( direction.y );
+    }
+    if( keys[ SDL_SCANCODE_A ] ) {
+        position.x += 0.1f * cosf( direction.y );
+        position.z += 0.1f * sinf( direction.y );
+    }
+    if( keys[ SDL_SCANCODE_D ] ) {
+        position.x -= 0.1f * cosf( direction.y );
+        position.z -= 0.1f * sinf( direction.y );
+    }
+    if( keys[ SDL_SCANCODE_UP ] ) {
+        direction.y += 0.1f;
+    }
+    if( keys[ SDL_SCANCODE_DOWN ] ) {
+        direction.y -= 0.1f;
+    }
+    if( keys[ SDL_SCANCODE_LEFT ] ) {
+        direction.x -= 0.1f;
+    }
+    if( keys[ SDL_SCANCODE_RIGHT ] ) {
+        direction.x += 0.1f;
+    }
+    if( keys[ SDL_SCANCODE_SPACE ] ) {
+        position.y += 0.1f;
+    }
+    if( keys[ SDL_SCANCODE_LCTRL ] ) {
+        position.y -= 0.1f;
+    }
+    while ( SDL_PollEvent( &e ) ) {
+        if ( e.type == SDL_MOUSEMOTION ) {
+            direction.y += ( float )e.motion.xrel / 500.f;
+            direction.x -= ( float )e.motion.yrel / 500.f;
         }
+    }
+    vec2_t res          = get_screen_size();
+    SDL_Window *pWindow = get_window();
+    SDL_WarpMouseInWindow( pWindow, res.x / 2, res.y / 2 );
+    
 #endif /* USE_SDL  */
         draw_vertex_buffer( handle );
 
@@ -98,6 +106,8 @@ s32 run( void ) {
         set_camera_direction( camera, direction );
 
         draw_frame();
+
+        log_note( "Directions: %f, %f\n", direction.x, direction.y );
 
         SDL_Delay( 1000 / 144 );
     }

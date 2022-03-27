@@ -57,6 +57,21 @@ void ( *set_camera_fov )( handle_t sCamera, float sFov ) = 0;
  *    @param handle_t           The handle to the camera.
  */
 void ( *set_camera )( handle_t sCamera ) = 0;
+
+
+/*
+ *    Returns the width and height of the screen.
+ *
+ *    @return vec2_t             The width and height of the screen.
+ */
+vec2_t ( *get_screen_size )( void ) = 0;
+
+/*
+ *    Returns the SDL window.
+ *
+ *    @return SDL_Window *        The SDL window.
+ */
+SDL_Window *( *get_window )( void ) = 0;
 /*
  *    Creates a vertex buffer.
  *
@@ -139,6 +154,18 @@ s32 framework_init( void ) {
     set_camera = dl_sym( pGfx, "set_camera" );
     if ( !set_camera ) {
         log_error( "Failed to load set_camera function.\n" );
+        return 0;
+    }
+
+    get_screen_size = dl_sym( pGfx, "get_screen_size" );
+    if ( !get_screen_size ) {
+        log_error( "Failed to load get_screen_size function.\n" );
+        return 0;
+    }
+
+    get_window = dl_sym( pGfx, "get_window" );
+    if ( !get_window ) {
+        log_error( "Failed to load get_window function.\n" );
         return 0;
     }
 

@@ -10,6 +10,11 @@
 #pragma once
 
 #include "libchik.h"
+
+#if USE_SDL
+#include <SDL2/SDL.h>
+#endif /* USE_SDL  */
+
 /*
  *    Draws the current frame.
  */
@@ -58,6 +63,20 @@ extern void ( *set_camera_fov )( handle_t sCamera, float sFov );
  *    @param handle_t           The handle to the camera.
  */
 extern void ( *set_camera )( handle_t sCamera );
+
+/*
+ *    Returns the width and height of the screen.
+ *
+ *    @return vec2_t             The width and height of the screen.
+ */
+extern vec2_t ( *get_screen_size )( void );
+
+/*
+ *    Returns the SDL window.
+ *
+ *    @return SDL_Window *        The SDL window.
+ */
+extern SDL_Window *( *get_window )( void );
 /*
  *    Creates a vertex buffer.
  *
