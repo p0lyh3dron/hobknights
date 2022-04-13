@@ -12,6 +12,7 @@ include_directories( ${LIBCHIK} )
 link_libraries( LibChik SDL2 )
 
 set( CMAKE_POSITION_INDEPENDENT_CODE ON )
+
 add_library( Game SHARED ${SOURCES} )
 
 set_target_properties( 
