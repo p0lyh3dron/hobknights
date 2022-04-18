@@ -95,6 +95,24 @@ extern handle_t ( *create_vertex_buffer )( chik_vertex_t *spVertices, u32 sCount
 extern void ( *draw_vertex_buffer )( handle_t sBuffer );
 
 /*
+ *    Initializes the engine with the specified modules.
+ *
+ *    @param const s8 *    The name of the modules to initialize.
+ *    @param ...           The other modules to initialize.
+ *
+ *    @return u32          Returns 0 on failure, 1 on success.
+ */
+extern u32 ( *engine_init )( const s8 *modules, ... );
+
+/*
+ *    Loads a function from the engine for external use.
+ *
+ *    @param const s8 *    The name of the function to load.
+ * 
+ *    @return void *       Returns a pointer to the function.
+ */
+extern void *( *engine_load_function )( const s8 *spName );
+/*
  *    Initialize all functions used in the engine.
  *
  *    @return s32    1 on success, 0 on failure

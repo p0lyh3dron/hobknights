@@ -89,7 +89,27 @@ handle_t ( *create_vertex_buffer )( chik_vertex_t *spVertices, u32 sCount );
  */
 void ( *draw_vertex_buffer )( handle_t sBuffer );
 
-dl_handle_t pGfx = 0;
+/*
+ *    Initializes the engine with the specified modules.
+ *
+ *    @param const s8 *    The name of the modules to initialize.
+ *    @param ...           The other modules to initialize.
+ *
+ *    @return u32          Returns 0 on failure, 1 on success.
+ */
+u32 ( *engine_init )( const s8 *modules, ... ) = 0;
+
+/*
+ *    Loads a function from the engine for external use.
+ *
+ *    @param const s8 *    The name of the function to load.
+ * 
+ *    @return void *       Returns a pointer to the function.
+ */
+void *( *engine_load_function )( const s8 *spName ) = 0;
+
+dl_handle_t pGfx    = 0;
+dl_handle_t pEngine = 0;
 
 /*
  *    Initialize all functions used in the engine.
@@ -169,6 +189,24 @@ s32 framework_init( void ) {
         return 0;
     }
 
+    pEngine = dl_open( "./bin/libchikengine.so" );
+    if ( !pEngine ) {
+        log_error( "Failed to load engine dll.\n" );
+        return 0;
+    }
+
+    engine_init = dl_sym( pEngine, "engine_init" );
+    if ( !engine_init ) {
+        log_error( "Failed to load engine_init function.\n" );
+        return 0;
+    }
+
+    engine_load_function = dl_sym( pEngine, "engine_load_function" );
+    if ( !engine_load_function ) {
+        log_error( "Failed to load engine_load_function function.\n" );
+        return 0;
+    }
+
     return 1;
 }
 
@@ -178,5 +216,8 @@ s32 framework_init( void ) {
 void framework_shutdown( void ) {
     if( pGfx ) {
         dl_close( pGfx );
+    }
+    if ( pEngine ) {
+        dlclose( pEngine );
     }
 }
