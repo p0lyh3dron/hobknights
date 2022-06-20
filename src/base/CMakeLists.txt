@@ -1,9 +1,8 @@
 cmake_minimum_required( VERSION 3.10 )
 
-Project( Game VERSION 1.0 )
+Project( Base VERSION 1.0 )
 
 file( GLOB SOURCES *.c )
-file( GLOB BASE_SOURCES ../base/*.c )
 
 get_property( CHIK_GAMES GLOBAL PROPERTY CHIK_GAMES )
 get_property( LIBCHIK GLOBAL PROPERTY LIBCHIK )
@@ -12,14 +11,14 @@ include_directories( ${LIBCHIK} )
 
 link_directories( "${CMAKE_SOURCE_DIR}/src/thirdparty" )
 link_libraries( "discord_game_sdk.so" )
-link_libraries( LibChik SDL2 )
+link_libraries( LibChik )
 
 set( CMAKE_POSITION_INDEPENDENT_CODE ON )
 
-add_library( Game SHARED ${SOURCES} ${BASE_SOURCES} )
+add_library( Base SHARED ${SOURCES} )
 
 set_target_properties( 
-    Game PROPERTIES
+    Base PROPERTIES
 
     RUNTIME_OUTPUT_NAME hobknights
     LIBRARY_OUTPUT_NAME hobknights

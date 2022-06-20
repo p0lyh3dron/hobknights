@@ -38,6 +38,7 @@ void print_help( void ) {
  */
 int main( const int argc, const char **argv ) {
     args_init( argc, argv );
+    threadpool_init();
 
     dl_handle_t d      = 0;
     const char *pGame  = 0;
