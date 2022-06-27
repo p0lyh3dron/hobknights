@@ -1,8 +1,10 @@
 #include "game.h"
 
+#include "dev.h"
 #include "drive.h"
 #include "entity.h"
 #include "map.h"
+#include "shader.h"
 
 s32 gPlayer = -1;
 
@@ -30,25 +32,17 @@ void game_setup( void ) {
 
     u32 map = map_test_create( ( vec3_t ){ 0.f, 0.f, 0.f }, 4.f );
 
-    chik_vertex_t vertices[ 36 ];
-    memcpy( vertices, create_cube( 0.25f ), sizeof( vertices ) );
-    handle_t vbuffer = vbuffer_create( vertices, sizeof( vertices ), sizeof( vertices[ 0 ] ), gVLayout );
-    handle_t tex     = texture_create_from_file( "hobknights/assets/images/dev/noise.bmp", 69 );
+    gLight1 = dev_cube_create( 0.05f );
+    gLight2 = dev_cube_create( 0.1f  );
 
-    model_t model = model_create( vbuffer, tex );
-    model.aRot = ( vec3_t ){ 69.f, 42.f, 0.f };
+    entity_add_light( gLight1, ( vec3_t ){ 1.0f, 0.5f, 0.5f }, 50.f );
+    entity_add_light( gLight2, ( vec3_t ){ 0.5f, 0.5f, 1.0f }, 100.f );
 
-    gLight1 = entity_create();
-    entity_add_transform( gLight1, nullptr, nullptr );
-    entity_add_light( gLight1, ( vec3_t ){ 1.0f, 0.5f, 0.5f }, 0.5f );
-    entity_add_model( gLight1, model );
-
-    model.aRot = ( vec3_t ){ 0.f, 0.f, 0.f };
-    gLight2 = entity_create();
-    entity_add_transform( gLight2, nullptr, nullptr );
-    entity_add_light( gLight2, ( vec3_t ){ 0.5f, 0.5f, 1.0f }, 1.0f );
-    entity_add_model( gLight2, model );
-
+    e_transform_t *pTrans = entity_get_transform( gLight1 );
+    pTrans->aRotation     = ( vec2_t ){ 20.f, 0.f };
+    
+    pTrans = entity_get_transform( gLight2 );
+    pTrans->aRotation     = ( vec2_t ){ 69.f, 42.f };
     /*
      *    We'll hold on to these for now.
      */
@@ -59,8 +53,9 @@ void game_setup( void ) {
      *    Move the player from the center of the map.
      */
     gpCamera->aOriginOffset.y = 0.f;
-    gpPlayerPos->aPosition.z   = -10.f;
-    gpPlayerPos->aPosition.y   = 0.f;
+    gpPlayerPos->aPosition.z  = 10.f;
+    gpPlayerPos->aPosition.y  = 0.f;
+    gpPlayerPos->aRotation.y  = 3.14f;
     
     gCam = create_camera();
 
@@ -79,21 +74,22 @@ f32 t = 0.f;
  *    Updates the game.
  */
 void game_update( void ) {
-    t += 0.01f;
+    shader_begin( gCam );
+    t += 0.05f;
     drive_drive_driven_entity();
 
     e_transform_t *pPos = entity_get_transform( gLight1 );
-    pPos->aPosition.x = sinf( t ) * 10.f;
-    pPos->aPosition.z = cosf( t ) * 10.f;
-    pPos->aPosition.y = 0.f;
+    pPos->aPosition.x = sinf( t ) * 1.f;
+    pPos->aPosition.z = cosf( t ) * 1.f;
+    pPos->aPosition.y = sinf( 0.33 * t ) * 1.5f;
 
     pPos->aRotation.x = 42.f;
     pPos->aRotation.y = 42.f;
 
     pPos = entity_get_transform( gLight2 );
-    pPos->aPosition.x = cosf( t ) * 10.f;
-    pPos->aPosition.z = sinf( t ) * 10.f;
-    pPos->aPosition.y = 0.f;
+    pPos->aPosition.x = cosf( t ) * 2.f;
+    pPos->aPosition.z = sinf( t ) * 2.f;
+    pPos->aPosition.y = sinf( 0.33 * t ) * -1.5f;
 
     vec3_t cam = { gpPlayerPos->aPosition.x + gpCamera->aOriginOffset.x,
                    gpPlayerPos->aPosition.y + gpCamera->aOriginOffset.y,

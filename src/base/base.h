@@ -19,8 +19,6 @@
 #endif /* USE_SDL  */
 
 #include "model.h"
-#include "shader.h"
-
 /*
  *    Declare function pointers for the base that are defined
  *    in the engine and need to be linked.

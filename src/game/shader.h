@@ -3,13 +3,11 @@
  *
  *    Authored by Karl "p0lyh3dron" Kreuze on June 16, 2022.
  * 
- *    This file is part of the Chik game base.
- * 
  *    This file defines the functions for creating and manipulating shaders.
  *    At the moment, the only shader is the basic shader.
  */
-#ifndef BASE_SHADER_H
-#define BASE_SHADER_H
+#ifndef HOBKNIGHTS_SHADER_H
+#define HOBKNIGHTS_SHADER_H
 
 #include "libchik.h"
 
@@ -22,6 +20,17 @@
  */
 void sample_texture( fragment_t *spFrag, vec2_t *spUV, void *spData );
 
+/*
+ *    Sets up for a shader pass, this will be useful
+ *    for performance.
+ * 
+ *    @param handle_t    The camera to use for projection.
+ */
+void shader_begin( handle_t sCamera );
+
+/*
+ *    This vertex layout contains the position, and texture coordinates.
+ */
 extern v_layout_t gVLayout;
 
-#endif /* BASE_SHADER_H  */
+#endif /* HOBKNIGHTS_SHADER_H  */

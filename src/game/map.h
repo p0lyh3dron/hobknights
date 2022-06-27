@@ -6,15 +6,6 @@
 #include "../base/base.h"
 
 /*
- *    Creates a cube.
- *
- *    @param f32                 The size of the cube.
- * 
- *    @return chik_vertex_t *    The cube.
- */
-chik_vertex_t *create_cube( f32 sSize );
-
-/*
  *    Creates the test map.
  *
  *    @param  vec3_t    The center of the map.

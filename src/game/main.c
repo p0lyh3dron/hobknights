@@ -21,6 +21,7 @@
 s32 gActive = 1;
 
 s32 run( void ) {
+    filesystem_add_search_path( "./hobknights/" );
 #if USE_SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
         log_error( "Failed to initialize SDL.\n" );

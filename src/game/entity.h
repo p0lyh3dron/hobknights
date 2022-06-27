@@ -11,6 +11,8 @@ typedef enum {
 
 #include "entitycomponents.h"
 
+extern entity_flag_e gEntityFlags[ MAX_ENTITIES ];
+
 extern e_transform_t gTransforms[ MAX_ENTITIES ];
 extern e_driveable_t gDriveables[ MAX_ENTITIES ];
 extern e_camera_t    gCameras   [ MAX_ENTITIES ];
