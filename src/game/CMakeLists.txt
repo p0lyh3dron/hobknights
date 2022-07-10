@@ -11,7 +11,6 @@ get_property( LIBCHIK GLOBAL PROPERTY LIBCHIK )
 include_directories( ${LIBCHIK} )
 
 link_directories( "${CMAKE_SOURCE_DIR}/src/thirdparty" )
-link_libraries( "discord_game_sdk.so" )
 link_libraries( LibChik SDL2 )
 
 set( CMAKE_POSITION_INDEPENDENT_CODE ON )

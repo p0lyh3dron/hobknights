@@ -35,8 +35,8 @@ void game_setup( void ) {
     gLight1 = dev_cube_create( 0.05f );
     gLight2 = dev_cube_create( 0.1f  );
 
-    entity_add_light( gLight1, ( vec3_t ){ 1.0f, 0.5f, 0.5f }, 50.f );
-    entity_add_light( gLight2, ( vec3_t ){ 0.5f, 0.5f, 1.0f }, 100.f );
+    entity_add_light( gLight1, ( vec3_t ){ 1.0f, 0.5f, 0.5f }, 25.f );
+    entity_add_light( gLight2, ( vec3_t ){ 0.5f, 0.5f, 1.0f }, 50.f );
 
     e_transform_t *pTrans = entity_get_transform( gLight1 );
     pTrans->aRotation     = ( vec2_t ){ 20.f, 0.f };

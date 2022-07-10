@@ -11,10 +11,6 @@
 #include <string.h>
 #include <assert.h>
 
-#if USE_SDL
-#include <SDL2/SDL.h>
-#endif /* USE_SDL  */
-
 #include "../base/base.h"
 #include "game.h"
 
@@ -22,13 +18,6 @@ s32 gActive = 1;
 
 s32 run( void ) {
     filesystem_add_search_path( "./hobknights/" );
-#if USE_SDL
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
-        log_error( "Failed to initialize SDL.\n" );
-        return 0;
-    }
-    SDL_SetRelativeMouseMode( SDL_TRUE );
-#endif /* USE_SDL  */
 
     if ( !base_engine_init( "./bin/libchikengine.so", "./bin/libchikgfx.so", nullptr ) ) {
         log_fatal( "Unable to initialize the engine!\n" );
@@ -38,15 +27,13 @@ s32 run( void ) {
     game_setup();
 
     while ( gActive ) {
+        base_update_engine();
         game_update();
-        SDL_Delay( 1000 / 144 );
     }
 
     game_teardown();
 
-#if USE_SDL
-    SDL_Quit();
-#endif /* USE_SDL  */
+    base_free_engine_resources();
 
     return 0;
 }

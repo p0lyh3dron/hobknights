@@ -15,9 +15,13 @@
 /*
  *    Nullifys the function pointers.
  */
-extern u32 ( *engine_init )( const s8 *modules, ... ) = 0;
+u32 ( *engine_init )( const s8 *modules, ... ) = 0;
 
-extern void *( *engine_load_function )( const s8 *spName ) = 0;
+u32 ( *engine_update )( void ) = 0;
+
+void *( *engine_load_function )( const s8 *spName ) = 0;
+
+void ( *engine_free )() = 0;
 
 
 
@@ -59,9 +63,12 @@ void ( *set_camera )( handle_t sCamera ) = 0;
 
 vec2_t ( *get_screen_size )( void ) = 0;
 
-#if USE_SDL
-SDL_Window *( *get_window )( void ) = 0;
-#endif /* USE_SDL  */
+
+
+
+s8 *( *platform_get_event )( void ) = 0;
+
+vec2u_t ( *platform_get_joystick_event )( void ) = 0;
 
 /*
  *    Error checks a function load.
@@ -99,46 +106,56 @@ u32 base_engine_init( const s8 *spModules, ... ) {
     }
 
     *( void** )( &engine_init )          = dl_sym( engine, "engine_init" );
+    *( void** )( &engine_update )        = dl_sym( engine, "engine_update" );
     *( void** )( &engine_load_function ) = dl_sym( engine, "engine_load_function" );
+    *( void** )( &engine_free )          = dl_sym( engine, "engine_free" );
 
     if ( engine_init == nullptr ) {
-        log_error( "Could not find engine_init function.\n" );
+        log_error( "u32 base_engine_init( const s8 *, ... ) Could not find engine_init function.\n" );
+        return 0;
+    }
+    if ( engine_update == nullptr ) {
+        log_error( "u32 base_engine_init( const s8 *, ... ) Could not find engine_update function.\n" );
         return 0;
     }
     if ( engine_load_function == nullptr ) {
-        log_error( "Could not find engine_load_function function.\n" );
+        log_error( "u32 base_engine_init( const s8 *, ... ) Could not find engine_load_function function.\n" );
+        return 0;
+    }
+    if ( engine_free == nullptr ) {
+        log_error( "u32 base_engine_init( const s8 *, ... ) Could not find engine_free function.\n" );
         return 0;
     }
 
-    if ( !engine_init( "./bin/libchikengine.so", "./bin/libchikgfx.so", nullptr ) ) {
-        log_error( "Could not initialize engine.\n" );
+    if ( !engine_init( "./bin/libchikengine.so", "./bin/libchikplatform.so", "./bin/libchikgfx.so", nullptr ) ) {
+        log_error( "u32 base_engine_init( const s8 *, ... ) Could not initialize engine.\n" );
         return 0;
     }
 
     u32 error = 0;
 
-    *( void** )( &vbuffer_create )           = base_load_function( "vbuffer_create", &error );
-    *( void** )( &vbuffer_free )             = base_load_function( "vbuffer_free", &error );
-    *( void** )( &texture_create_from_file ) = base_load_function( "texture_create_from_file", &error );
-    *( void** )( &texture_free )             = base_load_function( "texture_free", &error );
-    *( void** )( &mesh_create )              = base_load_function( "mesh_create", &error );
-    *( void** )( &mesh_set_vertex_buffer )   = base_load_function( "mesh_set_vertex_buffer", &error );
-    *( void** )( &mesh_set_texture )         = base_load_function( "mesh_set_texture", &error );
-    *( void** )( &mesh_translate )           = base_load_function( "mesh_translate", &error );
-    *( void** )( &mesh_rotate )              = base_load_function( "mesh_rotate", &error );
-    *( void** )( &mesh_draw )                = base_load_function( "mesh_draw", &error );
-    *( void** )( &mesh_free )                = base_load_function( "mesh_free", &error );
-    *( void** )( &get_camera_view )          = base_load_function( "get_camera_view", &error );
-    *( void** )( &draw_frame )               = base_load_function( "draw_frame", &error );
-    *( void** )( &create_camera )            = base_load_function( "create_camera", &error );
-    *( void** )( &set_camera_position )      = base_load_function( "set_camera_position", &error );
-    *( void** )( &set_camera_direction )     = base_load_function( "set_camera_direction", &error );
-    *( void** )( &set_camera_fov )           = base_load_function( "set_camera_fov", &error );
-    *( void** )( &set_camera )               = base_load_function( "set_camera", &error );
-    *( void** )( &get_screen_size )          = base_load_function( "get_screen_size", &error );
-#if USE_SDL
-    *( void** )( &get_window )               = base_load_function( "get_window", &error );
-#endif /* USE_SDL  */
+    *( void** )( &vbuffer_create )              = base_load_function( "vbuffer_create", &error );
+    *( void** )( &vbuffer_free )                = base_load_function( "vbuffer_free", &error );
+    *( void** )( &texture_create_from_file )    = base_load_function( "texture_create_from_file", &error );
+    *( void** )( &texture_free )                = base_load_function( "texture_free", &error );
+    *( void** )( &mesh_create )                 = base_load_function( "mesh_create", &error );
+    *( void** )( &mesh_set_vertex_buffer )      = base_load_function( "mesh_set_vertex_buffer", &error );
+    *( void** )( &mesh_set_texture )            = base_load_function( "mesh_set_texture", &error );
+    *( void** )( &mesh_translate )              = base_load_function( "mesh_translate", &error );
+    *( void** )( &mesh_rotate )                 = base_load_function( "mesh_rotate", &error );
+    *( void** )( &mesh_draw )                   = base_load_function( "mesh_draw", &error );
+    *( void** )( &mesh_free )                   = base_load_function( "mesh_free", &error );
+    *( void** )( &get_camera_view )             = base_load_function( "get_camera_view", &error );
+    *( void** )( &draw_frame )                  = base_load_function( "draw_frame", &error );
+    *( void** )( &create_camera )               = base_load_function( "create_camera", &error );
+    *( void** )( &set_camera_position )         = base_load_function( "set_camera_position", &error );
+    *( void** )( &set_camera_direction )        = base_load_function( "set_camera_direction", &error );
+    *( void** )( &set_camera_fov )              = base_load_function( "set_camera_fov", &error );
+    *( void** )( &set_camera )                  = base_load_function( "set_camera", &error );
+    *( void** )( &get_screen_size )             = base_load_function( "get_screen_size", &error );
+
+    *( void** )( &platform_get_event )          = base_load_function( "platform_get_event", &error );
+    *( void** )( &platform_get_joystick_event ) = base_load_function( "platform_get_joystick_event", &error );
 
     return !error;
 }
@@ -147,12 +164,12 @@ u32 base_engine_init( const s8 *spModules, ... ) {
  *    Frees resources for below functions.
  */
 void base_free_engine_resources() {
-
+    engine_free();
 }
 
 /*
  *    Updates the engine.
  */
 void base_update_engine() {
-
+    engine_update();
 }

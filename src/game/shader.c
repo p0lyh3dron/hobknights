@@ -8,11 +8,70 @@
  */
 #include "shader.h"
 
+#include <math.h>
+
 #include "entity.h"
 
 mat4_t         gProjection                          = { 0         };
 e_light_t     *gpLightIndices[ MAX_ENTITIES ]       = { nullptr   };
 vec3_t         gTransformedLights[ MAX_ENTITIES ]   = { { 0 }     };
+
+/*
+ *    Performs bad lighting.
+ *
+ *    @param fragment_t *    The fragment to draw to.
+ *    @param vec4_t     *    The vertex position.
+ */
+void bad_lighting( fragment_t *spFrag, vec4_t *spV ) {
+    vec4_t worldPos = {
+        .x = spV->x * spV->w,
+        .y = spV->y * spV->w,
+        .z = 1 / spV->z,
+        .w = 1.f
+    };
+
+    /*
+     *    Loop through all the lights and sum the color values.
+     */
+    vec3_t color = { 0, 0, 0 };
+    s64 i;
+    for ( i = 0; i < MAX_ENTITIES && gpLightIndices[ i ] != nullptr; ++i ) {
+        /*
+         *    Our distance will be squared, so we'll use the distance squared,
+         *    saves us a sqrt.
+         */
+        f32 distance    = pow( worldPos.x - gTransformedLights[ i ].x, 2.f ) + 
+                          pow( worldPos.y - gTransformedLights[ i ].y, 2.f ) + 
+                          pow( worldPos.z - gTransformedLights[ i ].z, 2.f );
+
+        f32 attenuation = 1.f / distance;
+        f32 intensity   = gpLightIndices[ i ]->aIntensity * ( attenuation * attenuation );
+
+        color.x += gpLightIndices[ i ]->aColor.x * intensity;
+        color.y += gpLightIndices[ i ]->aColor.y * intensity;
+        color.z += gpLightIndices[ i ]->aColor.z * intensity;
+    }
+
+    /*
+     *    Clamp the color values.
+     */
+    color.x = MAX( color.x, 0.f );
+    color.x = MIN( color.x, 1.f );
+
+    color.y = MAX( color.y, 0.f );
+    color.y = MIN( color.y, 1.f );
+
+    color.z = MAX( color.z, 0.f );
+    color.z = MIN( color.z, 1.f );
+
+    /*
+     *    Now we'll calculate the diffuse color.
+     */
+    spFrag->aColor.r *= color.x;
+    spFrag->aColor.g *= color.y;
+    spFrag->aColor.b *= color.z;
+    spFrag->aColor.a = 1;
+}
 
 /*
  *    The basic shader.
@@ -86,63 +145,6 @@ void shader_begin( handle_t sCamera ) {
     for ( ; j < MAX_ENTITIES; ++j ) {
         gpLightIndices[ j ]     = nullptr;
     }
-}
-
-/*
- *    Performs bad lighting.
- *
- *    @param fragment_t *    The fragment to draw to.
- *    @param vec4_t     *    The vertex position.
- */
-void bad_lighting( fragment_t *spFrag, vec4_t *spV ) {
-    vec4_t worldPos = {
-        .x = spV->x * spV->w,
-        .y = spV->y * spV->w,
-        .z = 1 / spV->z,
-        .w = 1.f
-    };
-
-    /*
-     *    Loop through all the lights and sum the color values.
-     */
-    vec3_t color = { 0, 0, 0 };
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES && gpLightIndices[ i ] != nullptr; ++i ) {
-        /*
-         *    Our distance will be squared, so we'll use the distance squared,
-         *    saves us a sqrt.
-         */
-        f32 distance    = pow( worldPos.x - gTransformedLights[ i ].x, 2.f ) + 
-                          pow( worldPos.y - gTransformedLights[ i ].y, 2.f ) + 
-                          pow( worldPos.z - gTransformedLights[ i ].z, 2.f );
-
-        f32 attenuation = 1.f / distance;
-        f32 intensity   = gpLightIndices[ i ]->aIntensity * ( attenuation * attenuation );
-
-        color.x += gpLightIndices[ i ]->aColor.x * intensity;
-        color.y += gpLightIndices[ i ]->aColor.y * intensity;
-        color.z += gpLightIndices[ i ]->aColor.z * intensity;
-    }
-
-    /*
-     *    Clamp the color values.
-     */
-    color.x = MAX( color.x, 0.f );
-    color.x = MIN( color.x, 1.f );
-
-    color.y = MAX( color.y, 0.f );
-    color.y = MIN( color.y, 1.f );
-
-    color.z = MAX( color.z, 0.f );
-    color.z = MIN( color.z, 1.f );
-
-    /*
-     *    Now we'll calculate the diffuse color.
-     */
-    spFrag->aColor.r *= color.x;
-    spFrag->aColor.g *= color.y;
-    spFrag->aColor.b *= color.z;
-    spFrag->aColor.a = 1;
 }
 
 v_layout_t gVLayout = {

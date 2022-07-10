@@ -40,6 +40,7 @@ int main( const int argc, const char **argv ) {
     args_init( argc, argv );
     threadpool_init();
     filesystem_init( "./", "/");
+    log_open_file( "./log.txt" );
 
     dl_handle_t d      = 0;
     const char *pGame  = 0;
@@ -90,6 +91,7 @@ int main( const int argc, const char **argv ) {
     s32 result = pRun();
 
     dl_close( d );
+    log_close_file();
 
     return result;
 }

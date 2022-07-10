@@ -14,10 +14,6 @@
 
 #include "libchik.h"
 
-#if USE_SDL
-    #include <SDL2/SDL.h>
-#endif /* USE_SDL  */
-
 #include "model.h"
 /*
  *    Declare function pointers for the base that are defined
@@ -25,7 +21,11 @@
  */
 extern u32 ( *engine_init )( const s8 *modules, ... );
 
+extern u32 ( *engine_update )( void );
+
 extern void *( *engine_load_function )( const s8 *spName );
+
+extern void ( *engine_free )();
 
 
 
@@ -67,9 +67,11 @@ extern void ( *set_camera )( handle_t sCamera );
 
 extern vec2_t ( *get_screen_size )( void );
 
-#if USE_SDL
-extern SDL_Window *( *get_window )( void );
-#endif /* USE_SDL  */
+
+
+extern s8 *( *platform_get_event )( void );
+
+extern vec2u_t ( *platform_get_joystick_event )( void );
 
 /*
  *    Error checks a function load.
