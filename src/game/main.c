@@ -18,6 +18,7 @@ s32 gActive = 1;
 
 s32 run( void ) {
     filesystem_add_search_path( "./hobknights/" );
+    app_init( "Hobknights", ( vec3s_t ){ 1, 0, 0 } );
 
     if ( !base_engine_init( "./bin/libchikengine.so", "./bin/libchikgfx.so", nullptr ) ) {
         log_fatal( "Unable to initialize the engine!\n" );
