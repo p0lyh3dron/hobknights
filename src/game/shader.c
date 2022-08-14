@@ -10,6 +10,8 @@
 
 #include <math.h>
 
+#include "../base/base.h"
+
 #include "entity.h"
 
 mat4_t         gProjection                          = { 0         };
@@ -86,32 +88,6 @@ void basic_shader( fragment_t *spF, void *spV, void *spU ) {
     sample_texture( spF, &spVertex->aTexCoord, spU );
 
     bad_lighting( spF, &spVertex->aPos );
-}
-
-/*
- *    Samples a texture at the given UV coordinates.
- *
- *    @param fragment_t *    The fragment to draw to.
- *    @param vec2_t     *    The UV coordinates to sample.
- *    @param void       *    The texture to sample.
- */
-void sample_texture( fragment_t *spFrag, vec2_t *spUV, void *spData ) {
-    texture_t *pTex = ( texture_t* )spData;
-    image_t   *pImage = pTex->apImage;
-
-    if ( !spData || !pTex || !pImage ) {
-        return;
-    }
-
-    vec2u_t sUV = {
-        .x = ( u32 )( fmod( spUV->x, 1.0f ) * pImage->aWidth ),
-        .y = ( u32 )( fmod( spUV->y, 1.0f ) * pImage->aHeight)
-    };
-
-    spFrag->aColor.r = ( ( u8* )pImage->apData )[ ( sUV.x + sUV.y * pImage->aWidth ) * 3 + 0 ];
-    spFrag->aColor.g = ( ( u8* )pImage->apData )[ ( sUV.x + sUV.y * pImage->aWidth ) * 3 + 1 ];
-    spFrag->aColor.b = ( ( u8* )pImage->apData )[ ( sUV.x + sUV.y * pImage->aWidth ) * 3 + 2 ];
-    spFrag->aColor.a = 1;
 }
 
 /*

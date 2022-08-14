@@ -53,9 +53,9 @@ void game_setup( void ) {
      *    Move the player from the center of the map.
      */
     gpCamera->aOriginOffset.y = 0.f;
-    gpPlayerPos->aPosition.z  = 10.f;
+    gpPlayerPos->aPosition.z  = -10.f;
     gpPlayerPos->aPosition.y  = 0.f;
-    gpPlayerPos->aRotation.y  = 3.14f;
+    gpPlayerPos->aRotation.y  = 0.f;
     
     gCam = create_camera();
 
@@ -99,6 +99,7 @@ void game_update( void ) {
     set_camera_direction( gCam, gpPlayerPos->aRotation );
 
     entity_update();
+   
     threadpool_wait();
     draw_frame();
 }

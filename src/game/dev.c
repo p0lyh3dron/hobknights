@@ -58,7 +58,7 @@ u32 dev_cube_create( f32 sSize ) {
     };
 
     handle_t vbuffer = vbuffer_create( &pVertex, sizeof( pVertex ), sizeof( pVertex[ 0 ] ), gVLayout );
-    handle_t tex     = texture_create_from_file( "assets/images/dev/noise.bmp", 69 );
+    handle_t tex     = texture_create_from_file( "assets/images/dev/noise2.bmp", 69 );
 
     model_t model = model_create( vbuffer, tex );
 

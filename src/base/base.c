@@ -31,9 +31,15 @@ void ( *vbuffer_free )( handle_t sVBuffer ) = 0;
 
 handle_t ( *texture_create_from_file )( s8 *spPath, u32 sFormat ) = 0;
 
+handle_t ( *text_create )( const s8 * ) = 0;
+
 void ( *texture_free )( handle_t sTex ) = 0;
 
 handle_t ( *mesh_create )( handle_t sVBuffer, handle_t sTex ) = 0;
+
+void ( *mesh_set_skip_projection )( handle_t sMesh ) = 0;
+
+void ( *mesh_set_skip_clipping )( handle_t sMesh ) = 0;
 
 void ( *mesh_set_vertex_buffer )( handle_t sMesh, handle_t sVBuffer ) = 0;
 
@@ -42,6 +48,8 @@ void ( *mesh_set_texture )( handle_t sMesh, handle_t sTex ) = 0;
 void ( *mesh_translate )( vec3_t sTranslation ) = 0;
 
 void ( *mesh_rotate )( vec3_t sRotation ) = 0;
+
+void ( *mesh_scale )( vec3_t sScale ) = 0;
 
 void ( *mesh_draw )( handle_t sMesh ) = 0;
 
@@ -127,7 +135,7 @@ u32 base_engine_init( const s8 *spModules, ... ) {
         return 0;
     }
 
-    if ( !engine_init( "./bin/libchikengine.so", "./bin/libchikplatform.so", "./bin/libchikgfx.so", nullptr ) ) {
+    if ( !engine_init( "./bin/libchikengine.so", "./bin/libchikplatform.so", "./bin/libchikaudio.so", "./bin/libchikgfx.so", nullptr ) ) {
         log_error( "u32 base_engine_init( const s8 *, ... ) Could not initialize engine.\n" );
         return 0;
     }
@@ -137,12 +145,16 @@ u32 base_engine_init( const s8 *spModules, ... ) {
     *( void** )( &vbuffer_create )              = base_load_function( "vbuffer_create", &error );
     *( void** )( &vbuffer_free )                = base_load_function( "vbuffer_free", &error );
     *( void** )( &texture_create_from_file )    = base_load_function( "texture_create_from_file", &error );
+    *( void** )( &text_create )                 = base_load_function( "text_create", &error );
     *( void** )( &texture_free )                = base_load_function( "texture_free", &error );
     *( void** )( &mesh_create )                 = base_load_function( "mesh_create", &error );
+    *( void** )( &mesh_set_skip_projection )    = base_load_function( "mesh_set_skip_projection", &error );
+    *( void** )( &mesh_set_skip_clipping )      = base_load_function( "mesh_set_skip_clipping", &error );
     *( void** )( &mesh_set_vertex_buffer )      = base_load_function( "mesh_set_vertex_buffer", &error );
     *( void** )( &mesh_set_texture )            = base_load_function( "mesh_set_texture", &error );
     *( void** )( &mesh_translate )              = base_load_function( "mesh_translate", &error );
     *( void** )( &mesh_rotate )                 = base_load_function( "mesh_rotate", &error );
+    *( void** )( &mesh_scale )                  = base_load_function( "mesh_scale", &error );
     *( void** )( &mesh_draw )                   = base_load_function( "mesh_draw", &error );
     *( void** )( &mesh_free )                   = base_load_function( "mesh_free", &error );
     *( void** )( &get_camera_view )             = base_load_function( "get_camera_view", &error );

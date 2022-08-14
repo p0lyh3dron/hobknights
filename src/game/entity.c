@@ -69,6 +69,7 @@ u32 entity_add_transform( u32 sId, vec3_t *spPosition, vec2_t *spRotation ) {
             else {
                 gTransforms[ i ].aRotation = *spRotation;
             }
+            gTransforms[ i ].aScale = ( vec3_t ){ 1.f, 1.f, 1.f };
             return 1;
         }
     }
@@ -272,8 +273,9 @@ void entity_update( void ) {
             e_transform_t *pTrans = entity_get_transform( i );
             if ( pModel != nullptr ) {
                 if ( pTrans ) {
-                    pModel->aModel.aPos = pTrans->aPosition;
-                    pModel->aModel.aRot = ( vec3_t ){ pTrans->aRotation.x, pTrans->aRotation.y };
+                    pModel->aModel.aPos   = pTrans->aPosition;
+                    pModel->aModel.aRot   = ( vec3_t ){ pTrans->aRotation.x, pTrans->aRotation.y };
+                    pModel->aModel.aScale = pTrans->aScale;
                 }
                 model_draw( &pModel->aModel );
             }

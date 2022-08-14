@@ -96,6 +96,7 @@ u32 model_set_mesh_texture( model_t *spModel, handle_t sTex ) {
 void model_draw( model_t *spModel ) {
     mesh_rotate( spModel->aRot );
     mesh_translate( spModel->aPos );
+    mesh_scale( spModel->aScale );
     mesh_draw( spModel->aMesh );
 }
 

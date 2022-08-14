@@ -68,14 +68,14 @@ int main( const int argc, const char **argv ) {
         }
     }
     else {
-        log_fatal( "No game specified.\n" );
+        log_fatal( "int main( const int, const char** ): No game specified.\n" );
     }
 
     /*
      *    dl_open() failed.
      */
     if ( d == 0 ) {
-        log_fatal( "Could not load game: %s.\n\ndl_error(): %s\n", pGame, dl_error() );
+        log_fatal( "int main( const int, const char** ): Could not load game: %s.\n\ndl_error(): %s\n", pGame, dl_error() );
     }
 
     s32 ( *pRun )( void ) = 0;
@@ -85,7 +85,7 @@ int main( const int argc, const char **argv ) {
      *    dl_sym() failed.
      */
     if( pRun == 0 ) {
-        log_fatal( "Could not find run function in game: %s.\n\ndl_error(): %s\n", pGame, dl_error() );
+        log_fatal( "int main( const int, const char** ): Could not find run function in game: %s.\n\ndl_error(): %s\n", pGame, dl_error() );
     }
 
     s32 result = pRun();

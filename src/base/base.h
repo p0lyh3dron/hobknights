@@ -15,6 +15,9 @@
 #include "libchik.h"
 
 #include "model.h"
+#include "shaderops.h"
+#include "text.h"
+
 /*
  *    Declare function pointers for the base that are defined
  *    in the engine and need to be linked.
@@ -35,9 +38,15 @@ extern void ( *vbuffer_free )( handle_t sVBuffer );
 
 extern handle_t ( *texture_create_from_file )( s8 *spPath, u32 sFormat );
 
+extern handle_t ( *text_create )( const s8 * );
+
 extern void ( *texture_free )( handle_t sTex );
 
 extern handle_t ( *mesh_create )( handle_t sVBuffer, handle_t sTex );
+
+extern void ( *mesh_set_skip_projection )( handle_t sMesh );
+
+extern void ( *mesh_set_skip_clipping )( handle_t sMesh );
 
 extern void ( *mesh_set_vertex_buffer )( handle_t sMesh, handle_t sVBuffer );
 
@@ -46,6 +55,8 @@ extern void ( *mesh_set_texture )( handle_t sMesh, handle_t sTex );
 extern void ( *mesh_translate )( vec3_t sTranslation );
 
 extern void ( *mesh_rotate )( vec3_t sRotation );
+
+extern void ( *mesh_scale )( vec3_t sScale );
 
 extern void ( *mesh_draw )( handle_t sMesh );
 

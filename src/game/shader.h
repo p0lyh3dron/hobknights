@@ -12,15 +12,6 @@
 #include "libchik.h"
 
 /*
- *    Samples a texture at the given UV coordinates.
- *
- *    @param fragment_t *    The fragment to draw to.
- *    @param vec2_t     *    The UV coordinates to sample.
- *    @param void       *    The texture to sample.
- */
-void sample_texture( fragment_t *spFrag, vec2_t *spUV, void *spData );
-
-/*
  *    Sets up for a shader pass, this will be useful
  *    for performance.
  * 

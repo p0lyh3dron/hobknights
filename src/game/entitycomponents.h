@@ -6,6 +6,7 @@ typedef struct {
     s32    aId;
     vec3_t aPosition;
     vec2_t aRotation;
+    vec3_t aScale;
 } e_transform_t;
 
 typedef enum {
