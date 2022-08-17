@@ -11,16 +11,22 @@ s32 gPlayer = -1;
 e_transform_t *gpPlayerPos = nullptr;
 e_camera_t    *gpCamera    = nullptr;
 
-handle_t gCam = INVALID_HANDLE;
+trap_t gCam = INVALID_TRAP;
 
 s32 gLight1 = -1;
 s32 gLight2 = -1;
+
+text_t gText = {};
 
 /*
  *    Sets up the game.
  */
 void game_setup( void ) {
     entity_setup();
+
+    gText = text_init( "Text Test", BASE_TEXT_ALIGN_TOPRIGHT );
+    text_set_position( &gText, ( vec2_t ){ 1.f, 1.f } );
+    text_set_scale( &gText, ( vec2_t ){ 0.05f, 0.05f } );
 
     /*
      *    Create the player with a transform, driveable, and a camera.
@@ -98,6 +104,7 @@ void game_update( void ) {
     set_camera_position( gCam, cam );
     set_camera_direction( gCam, gpPlayerPos->aRotation );
 
+    text_render( gText );
     entity_update();
    
     threadpool_wait();

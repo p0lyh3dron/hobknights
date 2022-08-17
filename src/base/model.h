@@ -17,7 +17,7 @@ typedef struct {
     vec3_t aRot;
     vec3_t aScale;
 
-    handle_t aMesh;
+    trap_t aMesh;
 } model_t;
 
 /*
@@ -35,32 +35,32 @@ model_t model_create_raw( void *spVerts, u32 sSize, u32 sVStride, v_layout_t sLa
 /*
  *    Creates a model and its mesh.
  *
- *    @param handle_t     The handle to the vertex buffer.
- *    @param handle_t     The handle to the texture.
+ *    @param trap_t     The handle to the vertex buffer.
+ *    @param trap_t     The handle to the texture.
  * 
  *    @return model_t     The model.
  */
-model_t model_create( handle_t sVBuffer, handle_t sTexture );
+model_t model_create( trap_t sVBuffer, trap_t sTexture );
 
 /*
  *    Set's a model's mesh vertex data.
  *
  *    @param model_t       *    The model.
- *    @param handle_t           The handle to the vertex buffer.
+ *    @param trap_t           The handle to the vertex buffer.
  *
  *    @return u32               1 if successful, 0 otherwise.
  */
-u32 model_set_mesh_vertex_buffer( model_t *spModel, handle_t sVBuffer );
+u32 model_set_mesh_vertex_buffer( model_t *spModel, trap_t sVBuffer );
 
 /*
  *    Set's a model's mesh texture.
  *
  *    @param model_t *    The model.
- *    @param handle_t     The mesh texture.
+ *    @param trap_t     The mesh texture.
  *
  *    @return u32         1 if successful, 0 otherwise.
  */
-u32 model_set_mesh_texture( model_t *spModel, handle_t sTex );
+u32 model_set_mesh_texture( model_t *spModel, trap_t sTex );
 
 /*
  *    Draws a model.

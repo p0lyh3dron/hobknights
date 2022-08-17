@@ -15,9 +15,9 @@
  *    Sets up for a shader pass, this will be useful
  *    for performance.
  * 
- *    @param handle_t    The camera to use for projection.
+ *    @param trap_t    The camera to use for projection.
  */
-void shader_begin( handle_t sCamera );
+void shader_begin( trap_t sCamera );
 
 /*
  *    This vertex layout contains the position, and texture coordinates.

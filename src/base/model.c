@@ -10,7 +10,6 @@
 #include "model.h"
 
 #include "base.h"
-
 /*
  *    Creates a model with raw vertex data.
  *
@@ -23,13 +22,13 @@
  */
 model_t model_create_raw( void *spVerts, u32 sSize, u32 sVStride, v_layout_t sLayout ) {
     model_t sModel;
-    handle_t v = vbuffer_create( spVerts, sSize, sVStride, sLayout );
-    if ( v == INVALID_HANDLE ) {
+    trap_t v = vbuffer_create( spVerts, sSize, sVStride, sLayout );
+    if ( BAD_TRAP( v ) ) {
         log_error( "Could not create vertex buffer." );
         return sModel;
     }
-    sModel.aMesh = mesh_create( v, INVALID_HANDLE );
-    if ( sModel.aMesh == INVALID_HANDLE ) {
+    sModel.aMesh = mesh_create( v, INVALID_TRAP );
+    if ( BAD_TRAP( sModel.aMesh ) ) {
         log_error( "Could not create mesh." );
         return sModel;
     }
@@ -39,15 +38,15 @@ model_t model_create_raw( void *spVerts, u32 sSize, u32 sVStride, v_layout_t sLa
 /*
  *    Creates a model and its mesh.
  *
- *    @param handle_t     The handle to the vertex buffer.
- *    @param handle_t     The handle to the texture.
+ *    @param trap_t     The handle to the vertex buffer.
+ *    @param trap_t     The handle to the texture.
  * 
  *    @return model_t     The model.
  */
-model_t model_create( handle_t sVBuffer, handle_t sTexture ) {
+model_t model_create( trap_t sVBuffer, trap_t sTexture ) {
     model_t sModel;
     sModel.aMesh = mesh_create( sVBuffer, sTexture );
-    if ( sModel.aMesh == INVALID_HANDLE ) {
+    if ( BAD_TRAP( sModel.aMesh ) ) {
         log_error( "Could not create mesh." );
         return sModel;
     }
@@ -58,12 +57,12 @@ model_t model_create( handle_t sVBuffer, handle_t sTexture ) {
  *    Set's a model's mesh vertex data.
  *
  *    @param model_t       *    The model.
- *    @param handle_t           The handle to the vertex buffer.
+ *    @param trap_t           The handle to the vertex buffer.
  *
  *    @return u32               1 if successful, 0 otherwise.
  */
-u32 model_set_mesh_vertex_buffer( model_t *spModel, handle_t sVBuffer ) {
-    if ( sVBuffer == INVALID_HANDLE ) {
+u32 model_set_mesh_vertex_buffer( model_t *spModel, trap_t sVBuffer ) {
+    if ( BAD_TRAP( sVBuffer ) ) {
         log_error( "Invalid vertex buffer handle." );
         return 0;
     }
@@ -75,12 +74,12 @@ u32 model_set_mesh_vertex_buffer( model_t *spModel, handle_t sVBuffer ) {
  *    Set's a model's mesh texture.
  *
  *    @param model_t *    The model.
- *    @param handle_t     The mesh texture.
+ *    @param trap_t     The mesh texture.
  *
  *    @return u32         1 if successful, 0 otherwise.
  */
-u32 model_set_mesh_texture( model_t *spModel, handle_t sTex ) {
-    if ( sTex == INVALID_HANDLE ) {
+u32 model_set_mesh_texture( model_t *spModel, trap_t sTex ) {
+    if ( BAD_TRAP( sTex ) ) {
         log_error( "Invalid texture handle." );
         return 0;
     }

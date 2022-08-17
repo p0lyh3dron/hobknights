@@ -94,9 +94,9 @@ void basic_shader( fragment_t *spF, void *spV, void *spU ) {
  *    Sets up for a shader pass, this will be useful
  *    for performance.
  * 
- *    @param handle_t    The camera to use for projection.
+ *    @param trap_t    The camera to use for projection.
  */
-void shader_begin( handle_t sCamera ) {
+void shader_begin( trap_t sCamera ) {
     gProjection = get_camera_view( sCamera );
 
     s64 i;

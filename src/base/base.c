@@ -25,25 +25,25 @@ void ( *engine_free )() = 0;
 
 
 
-handle_t ( *vbuffer_create )( void *spVerts, u32 sSize, u32 sVStride, v_layout_t sLayout ) = 0;
+trap_t ( *vbuffer_create )( void *spVerts, u32 sSize, u32 sVStride, v_layout_t sLayout ) = 0;
 
-void ( *vbuffer_free )( handle_t sVBuffer ) = 0;
+void ( *vbuffer_free )( trap_t sVBuffer ) = 0;
 
-handle_t ( *texture_create_from_file )( s8 *spPath, u32 sFormat ) = 0;
+trap_t ( *texture_create_from_file )( s8 *spPath, u32 sFormat ) = 0;
 
-handle_t ( *text_create )( const s8 * ) = 0;
+trap_t ( *text_create )( const s8 * ) = 0;
 
-void ( *texture_free )( handle_t sTex ) = 0;
+void ( *texture_free )( trap_t sTex ) = 0;
 
-handle_t ( *mesh_create )( handle_t sVBuffer, handle_t sTex ) = 0;
+trap_t ( *mesh_create )( trap_t sVBuffer, trap_t sTex ) = 0;
 
-void ( *mesh_set_skip_projection )( handle_t sMesh ) = 0;
+void ( *mesh_set_skip_projection )( trap_t sMesh ) = 0;
 
-void ( *mesh_set_skip_clipping )( handle_t sMesh ) = 0;
+void ( *mesh_set_skip_clipping )( trap_t sMesh ) = 0;
 
-void ( *mesh_set_vertex_buffer )( handle_t sMesh, handle_t sVBuffer ) = 0;
+void ( *mesh_set_vertex_buffer )( trap_t sMesh, trap_t sVBuffer ) = 0;
 
-void ( *mesh_set_texture )( handle_t sMesh, handle_t sTex ) = 0;
+void ( *mesh_set_texture )( trap_t sMesh, trap_t sTex ) = 0;
 
 void ( *mesh_translate )( vec3_t sTranslation ) = 0;
 
@@ -51,23 +51,23 @@ void ( *mesh_rotate )( vec3_t sRotation ) = 0;
 
 void ( *mesh_scale )( vec3_t sScale ) = 0;
 
-void ( *mesh_draw )( handle_t sMesh ) = 0;
+void ( *mesh_draw )( trap_t sMesh ) = 0;
 
-void ( *mesh_free )( handle_t sMesh ) = 0;
+void ( *mesh_free )( trap_t sMesh ) = 0;
 
-mat4_t ( *get_camera_view )( handle_t sCamera ) = 0;
+mat4_t ( *get_camera_view )( trap_t sCamera ) = 0;
 
 void ( *draw_frame )( void ) = 0;
 
-handle_t ( *create_camera )( void ) = 0;
+trap_t ( *create_camera )( void ) = 0;
 
-void ( *set_camera_position )( handle_t sCamera, vec3_t sPosition ) = 0;
+void ( *set_camera_position )( trap_t sCamera, vec3_t sPosition ) = 0;
 
-void ( *set_camera_direction )( handle_t sCamera, vec2_t sDirection ) = 0;
+void ( *set_camera_direction )( trap_t sCamera, vec2_t sDirection ) = 0;
 
-void ( *set_camera_fov )( handle_t sCamera, float sFov ) = 0;
+void ( *set_camera_fov )( trap_t sCamera, float sFov ) = 0;
 
-void ( *set_camera )( handle_t sCamera ) = 0;
+void ( *set_camera )( trap_t sCamera ) = 0;
 
 vec2_t ( *get_screen_size )( void ) = 0;
 
@@ -107,9 +107,9 @@ void *base_load_function( const s8 *spName, u32 *spError ) {
  *                         1 = success, 0 = failure.
  */
 u32 base_engine_init( const s8 *spModules, ... ) {
-    dl_handle_t engine = dl_open( "./bin/libchikengine.so" );
+    dl_handle_t engine = dl_open( "./bin/libchikengine" DL_EXTENSION );
     if ( engine == nullptr ) {
-        log_error( "Could not load engine library.\n" );
+        log_error( "u32 base_engine_init( const s8 *, ... ): Could not load engine library.\n" );
         return 0;
     }
 
@@ -119,24 +119,24 @@ u32 base_engine_init( const s8 *spModules, ... ) {
     *( void** )( &engine_free )          = dl_sym( engine, "engine_free" );
 
     if ( engine_init == nullptr ) {
-        log_error( "u32 base_engine_init( const s8 *, ... ) Could not find engine_init function.\n" );
+        log_error( "u32 base_engine_init( const s8 *, ... ): Could not find engine_init function.\n" );
         return 0;
     }
     if ( engine_update == nullptr ) {
-        log_error( "u32 base_engine_init( const s8 *, ... ) Could not find engine_update function.\n" );
+        log_error( "u32 base_engine_init( const s8 *, ... ): Could not find engine_update function.\n" );
         return 0;
     }
     if ( engine_load_function == nullptr ) {
-        log_error( "u32 base_engine_init( const s8 *, ... ) Could not find engine_load_function function.\n" );
+        log_error( "u32 base_engine_init( const s8 *, ... ): Could not find engine_load_function function.\n" );
         return 0;
     }
     if ( engine_free == nullptr ) {
-        log_error( "u32 base_engine_init( const s8 *, ... ) Could not find engine_free function.\n" );
+        log_error( "u32 base_engine_init( const s8 *, ... ): Could not find engine_free function.\n" );
         return 0;
     }
 
-    if ( !engine_init( "./bin/libchikengine.so", "./bin/libchikplatform.so", "./bin/libchikaudio.so", "./bin/libchikgfx.so", nullptr ) ) {
-        log_error( "u32 base_engine_init( const s8 *, ... ) Could not initialize engine.\n" );
+    if ( !engine_init( "./bin/libchikengine" DL_EXTENSION, "./bin/libchikplatform" DL_EXTENSION, "./bin/libchikaudio" DL_EXTENSION, "./bin/libchikgfx" DL_EXTENSION, nullptr ) ) {
+        log_error( "u32 base_engine_init( const s8 *, ... ): Could not initialize engine.\n" );
         return 0;
     }
 

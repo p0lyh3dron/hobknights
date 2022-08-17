@@ -23,8 +23,8 @@
 #define BASE_TEXT_ALIGN_BOTTOMLEFT   ( vec2_t ){  1.f,  1.f }
 
 typedef struct {
-    handle_t aMesh;
-    handle_t aTexture;
+    trap_t aMesh;
+    trap_t aTexture;
     vec2_t   aPosition;
     vec2_t   aScale;
     f32      aAspect;

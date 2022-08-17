@@ -41,8 +41,8 @@ void drive_drive_driven_entity() {
                     gActive = 0;
                 }
                 if ( strncmp( pEvent, "w\0", 2 ) == 0 ) {
-                    gpTransform->aPosition.z += 0.1f * cosf( gpTransform->aRotation.y ) * PLAYERSPEED;
-                    gpTransform->aPosition.x -= 0.1f * sinf( gpTransform->aRotation.y ) * PLAYERSPEED;
+                    gpTransform->aPosition.z += 0.1f * cosf( gpTransform->aRotation.y ) * cosf( gpTransform->aRotation.x ) * PLAYERSPEED;
+                    gpTransform->aPosition.x -= 0.1f * sinf( gpTransform->aRotation.y ) * cosf( gpTransform->aRotation.x ) * PLAYERSPEED;
                     gpTransform->aPosition.y += 0.1f * sinf( gpTransform->aRotation.x ) * PLAYERSPEED;
                 }
                 if ( strncmp( pEvent, "a\0", 2 ) == 0 ) {
@@ -50,8 +50,8 @@ void drive_drive_driven_entity() {
                     gpTransform->aPosition.z -= 0.1f * sinf( gpTransform->aRotation.y ) * PLAYERSPEED;
                 }
                 if ( strncmp( pEvent, "s\0", 2 ) == 0 ) {
-                    gpTransform->aPosition.z -= 0.1f * cosf( gpTransform->aRotation.y ) * PLAYERSPEED;
-                    gpTransform->aPosition.x += 0.1f * sinf( gpTransform->aRotation.y ) * PLAYERSPEED;
+                    gpTransform->aPosition.z -= 0.1f * cosf( gpTransform->aRotation.y ) * cosf( gpTransform->aRotation.x ) * PLAYERSPEED;
+                    gpTransform->aPosition.x += 0.1f * sinf( gpTransform->aRotation.y ) * cosf( gpTransform->aRotation.x ) * PLAYERSPEED;
                     gpTransform->aPosition.y -= 0.1f * sinf( gpTransform->aRotation.x ) * PLAYERSPEED;
                 }
                 if ( strncmp( pEvent, "d\0", 2 ) == 0 ) {

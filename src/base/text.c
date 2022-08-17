@@ -56,10 +56,10 @@ text_t text_init( const s8 *spText, vec2_t sAlignment ) {
         { {  1.f + sAlignment.x,  1.f + sAlignment.y, 1.f, 1.f }, { 1.f, 1.f } },
     };
 
-    handle_t v = vbuffer_create( &verts, sizeof( verts ), sizeof( chik_vertex_t ), gTextLayout );
-    handle_t t = text_create( spText );
+    trap_t v = vbuffer_create( &verts, sizeof( verts ), sizeof( chik_vertex_t ), gTextLayout );
+    trap_t t = text_create( spText );
 
-    handle_t m = mesh_create( v, t );
+    trap_t m = mesh_create( v, t );
 
     mesh_set_skip_projection( m );
     mesh_set_skip_clipping( m );
@@ -89,7 +89,7 @@ text_t text_init( const s8 *spText, vec2_t sAlignment ) {
 void text_update( text_t *pText, const s8 *spText ) {
     texture_free( pText->aTexture );
     
-    handle_t t = text_create( spText );
+    trap_t t = text_create( spText );
     mesh_set_texture( pText->aMesh, t );
     pText->aTexture = t;
 }
@@ -126,7 +126,7 @@ void text_set_scale( text_t *spText, vec2_t sScale ) {
  *    @param text_t      The text to render.
  */
 void text_render( text_t sText ) {
-    if ( sText.aMesh == INVALID_HANDLE ) {
+    if ( BAD_TRAP( sText.aMesh ) ) {
         return;
     }
     mesh_translate( ( vec3_t ){ sText.aPosition.x, sText.aPosition.y, 0.f } );

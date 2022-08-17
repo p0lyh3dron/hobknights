@@ -39,7 +39,7 @@ void print_help( void ) {
 int main( const int argc, const char **argv ) {
     args_init( argc, argv );
     threadpool_init();
-    filesystem_init( "./", "/");
+    filesystem_init( "./", "/", nullptr );
     log_open_file( "./log.txt" );
 
     dl_handle_t d      = 0;

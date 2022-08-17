@@ -29,8 +29,8 @@ void sample_texture( fragment_t *spFrag, vec2_t *spUV, void *spData ) {
         .y = ( u32 )( fmod( spUV->y, 1.0f ) * pImage->aHeight)
     };
 
-    spFrag->aColor.r = ( ( u8* )pImage->apData )[ ( sUV.x + sUV.y * pImage->aWidth ) * 4 + 3 ];
-    spFrag->aColor.g = ( ( u8* )pImage->apData )[ ( sUV.x + sUV.y * pImage->aWidth ) * 4 + 2 ];
-    spFrag->aColor.b = ( ( u8* )pImage->apData )[ ( sUV.x + sUV.y * pImage->aWidth ) * 4 + 1 ];
-    spFrag->aColor.a = ( ( u8* )pImage->apData )[ ( sUV.x + sUV.y * pImage->aWidth ) * 4 + 0 ];
+    spFrag->aColor.r = ( ( u8* )pImage->apData )[ ( sUV.x + sUV.y * pImage->aWidth ) * 4 + 0 ];
+    spFrag->aColor.g = ( ( u8* )pImage->apData )[ ( sUV.x + sUV.y * pImage->aWidth ) * 4 + 1 ];
+    spFrag->aColor.b = ( ( u8* )pImage->apData )[ ( sUV.x + sUV.y * pImage->aWidth ) * 4 + 2 ];
+    spFrag->aColor.a = ( ( u8* )pImage->apData )[ ( sUV.x + sUV.y * pImage->aWidth ) * 4 + 3 ];
 }

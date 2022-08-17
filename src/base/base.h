@@ -32,25 +32,25 @@ extern void ( *engine_free )();
 
 
 
-extern handle_t ( *vbuffer_create )( void *spVerts, u32 sSize, u32 sVStride, v_layout_t sLayout );
+extern trap_t ( *vbuffer_create )( void *spVerts, u32 sSize, u32 sVStride, v_layout_t sLayout );
 
-extern void ( *vbuffer_free )( handle_t sVBuffer );
+extern void ( *vbuffer_free )( trap_t sVBuffer );
 
-extern handle_t ( *texture_create_from_file )( s8 *spPath, u32 sFormat );
+extern trap_t ( *texture_create_from_file )( s8 *spPath, u32 sFormat );
 
-extern handle_t ( *text_create )( const s8 * );
+extern trap_t ( *text_create )( const s8 * );
 
-extern void ( *texture_free )( handle_t sTex );
+extern void ( *texture_free )( trap_t sTex );
 
-extern handle_t ( *mesh_create )( handle_t sVBuffer, handle_t sTex );
+extern trap_t ( *mesh_create )( trap_t sVBuffer, trap_t sTex );
 
-extern void ( *mesh_set_skip_projection )( handle_t sMesh );
+extern void ( *mesh_set_skip_projection )( trap_t sMesh );
 
-extern void ( *mesh_set_skip_clipping )( handle_t sMesh );
+extern void ( *mesh_set_skip_clipping )( trap_t sMesh );
 
-extern void ( *mesh_set_vertex_buffer )( handle_t sMesh, handle_t sVBuffer );
+extern void ( *mesh_set_vertex_buffer )( trap_t sMesh, trap_t sVBuffer );
 
-extern void ( *mesh_set_texture )( handle_t sMesh, handle_t sTex );
+extern void ( *mesh_set_texture )( trap_t sMesh, trap_t sTex );
 
 extern void ( *mesh_translate )( vec3_t sTranslation );
 
@@ -58,23 +58,23 @@ extern void ( *mesh_rotate )( vec3_t sRotation );
 
 extern void ( *mesh_scale )( vec3_t sScale );
 
-extern void ( *mesh_draw )( handle_t sMesh );
+extern void ( *mesh_draw )( trap_t sMesh );
 
-extern void ( *mesh_free )( handle_t sMesh );
+extern void ( *mesh_free )( trap_t sMesh );
 
-extern mat4_t ( *get_camera_view )( handle_t sCamera );
+extern mat4_t ( *get_camera_view )( trap_t sCamera );
 
 extern void ( *draw_frame )( void );
 
-extern handle_t ( *create_camera )( void );
+extern trap_t ( *create_camera )( void );
 
-extern void ( *set_camera_position )( handle_t sCamera, vec3_t sPosition );
+extern void ( *set_camera_position )( trap_t sCamera, vec3_t sPosition );
 
-extern void ( *set_camera_direction )( handle_t sCamera, vec2_t sDirection );
+extern void ( *set_camera_direction )( trap_t sCamera, vec2_t sDirection );
 
-extern void ( *set_camera_fov )( handle_t sCamera, float sFov );
+extern void ( *set_camera_fov )( trap_t sCamera, float sFov );
 
-extern void ( *set_camera )( handle_t sCamera );
+extern void ( *set_camera )( trap_t sCamera );
 
 extern vec2_t ( *get_screen_size )( void );
 
