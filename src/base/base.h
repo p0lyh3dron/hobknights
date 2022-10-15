@@ -107,6 +107,13 @@ void *base_load_function( const s8 *spName, u32 *spError );
 u32 base_engine_init( const s8 *spModules, ... );
 
 /*
+ *    Updates the engine and checks the game state.
+ *
+ *    @return u32          Whether or not the game is still running.
+ */
+u32 base_engine_update( void );
+
+/*
  *    Frees resources for below functions.
  */
 void base_free_engine_resources();

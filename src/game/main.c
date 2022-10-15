@@ -14,8 +14,6 @@
 #include "../base/base.h"
 #include "game.h"
 
-s32 gActive = 1;
-
 s32 run( void ) {
     filesystem_add_search_path( "./hobknights/" );
     app_init( "Hobknights", ( vec3s_t ){ 1, 0, 0 } );
@@ -27,7 +25,7 @@ s32 run( void ) {
 
     game_setup();
 
-    while ( gActive ) {
+    while ( base_engine_update() ) {
         base_update_engine();
         game_update();
     }

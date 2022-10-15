@@ -22,6 +22,13 @@ text_t gText = {};
  *    Sets up the game.
  */
 void game_setup( void ) {
+    shell_variable_t variables[] = {
+        { "e_timescale", "The timescale of the rotating blocks.", "0.05", SHELL_VAR_FLOAT }, 
+        { nullptr, nullptr, nullptr, SHELL_VAR_NONE }
+    };
+
+    shell_register_variables( variables );
+
     entity_setup();
 
     gText = text_init( "Text Test", BASE_TEXT_ALIGN_TOPRIGHT );
@@ -81,7 +88,7 @@ f32 t = 0.f;
  */
 void game_update( void ) {
     shader_begin( gCam );
-    t += 0.05f;
+    t += strtof( shell_get_variable( "e_timescale" ), nullptr );
     drive_drive_driven_entity();
 
     e_transform_t *pPos = entity_get_transform( gLight1 );

@@ -38,6 +38,7 @@ void print_help( void ) {
  */
 int main( const int argc, const char **argv ) {
     args_init( argc, argv );
+    shell_init();
     threadpool_init();
     filesystem_init( "./", "/", nullptr );
     log_open_file( "./log.txt" );

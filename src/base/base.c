@@ -12,6 +12,8 @@
 
 #include "base.h"
 
+u32 gActive = 0;
+
 /*
  *    Nullifys the function pointers.
  */
@@ -98,6 +100,13 @@ void *base_load_function( const s8 *spName, u32 *spError ) {
 }
 
 /*
+ *    Quits the application.
+ */
+void quit() {
+    gActive = 0;
+}
+
+/*
  *    Initializes resources for below functions.
  *
  *    @param const s8 *    The modules to load.
@@ -107,6 +116,12 @@ void *base_load_function( const s8 *spName, u32 *spError ) {
  *                         1 = success, 0 = failure.
  */
 u32 base_engine_init( const s8 *spModules, ... ) {
+    shell_command_t commands[] = {
+        { "quit", "Quits the application.", quit },
+        { nullptr, nullptr, nullptr }
+    };
+    shell_register_commands( commands );
+
     dl_handle_t engine = dl_open( "./bin/libchikengine" DL_EXTENSION );
     if ( engine == nullptr ) {
         log_error( "u32 base_engine_init( const s8 *, ... ): Could not load engine library.\n" );
@@ -169,7 +184,18 @@ u32 base_engine_init( const s8 *spModules, ... ) {
     *( void** )( &platform_get_event )          = base_load_function( "platform_get_event", &error );
     *( void** )( &platform_get_joystick_event ) = base_load_function( "platform_get_joystick_event", &error );
 
+    gActive = 1;
+
     return !error;
+}
+
+/*
+ *    Updates the engine and checks the game state.
+ *
+ *    @return u32          Whether or not the game is still running.
+ */
+u32 base_engine_update( void ) {
+    return engine_update() && gActive;
 }
 
 /*
