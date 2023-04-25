@@ -3,10 +3,10 @@
 #include "libchik.h"
 
 typedef struct {
-    s32    aId;
-    vec3_t aPosition;
-    vec2_t aRotation;
-    vec3_t aScale;
+    int    id;
+    vec3_t pos;
+    vec2_t rot;
+    vec3_t scale;
 } e_transform_t;
 
 typedef enum {
@@ -15,23 +15,23 @@ typedef enum {
 } e_drivable_movetype_e;
 
 typedef struct {
-    s32                   aId;
-    f32                   aSpeed;
-    e_drivable_movetype_e aMoveType;
+    int                   id;
+    float                 speed;
+    e_drivable_movetype_e move_type;
 } e_driveable_t;
 
 typedef struct {
-    s32    aId;
-    vec3_t aOriginOffset;
+    int    id;
+    vec3_t origin_offset;
 } e_camera_t;
 
 typedef struct {
-    s32    aId;
-    f32    aIntensity;
-    vec3_t aColor;
+    int    id;
+    float  intensity;
+    vec3_t color;
 } e_light_t;
 
 typedef struct {
-    s32     aId;
-    model_t aModel;
+    int      id;
+    model_t *model;
 } e_model_t;

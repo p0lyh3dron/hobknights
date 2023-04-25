@@ -5,66 +5,76 @@
 #include "entity.h"
 #include "shader.h"
 
+image_t *_dev_image = (image_t *)0x0;
+
 /*
  *    Create a developer cube entity with a model and transform.
  *
- *    @param f32     The size of the cube.
- * 
- *    @return u32    The entity ID of the cube.
+ *    @param float size     The size of the cube.
+ *
+ *    @return unsigned int    The entity ID of the cube.
  */
-u32 dev_cube_create( f32 sSize ) {
-    chik_vertex_t pVertex[ 36 ] = {
-        { { - sSize, - sSize, - sSize, 1.f }, { 0.f, 0.f } },
-        { { - sSize, + sSize, - sSize, 1.f }, { 0.f, 1.f } },
-        { { + sSize, + sSize, - sSize, 1.f }, { 1.f, 1.f } },
-        { { - sSize, - sSize, - sSize, 1.f }, { 0.f, 0.f } },
-        { { + sSize, - sSize, - sSize, 1.f }, { 1.f, 0.f } },
-        { { + sSize, + sSize, - sSize, 1.f }, { 1.f, 1.f } },
-        
-        { { - sSize, - sSize, + sSize, 1.f }, { 0.f, 0.f } },
-        { { - sSize, + sSize, + sSize, 1.f }, { 0.f, 1.f } },
-        { { + sSize, + sSize, + sSize, 1.f }, { 1.f, 1.f } },
-        { { - sSize, - sSize, + sSize, 1.f }, { 0.f, 0.f } },
-        { { + sSize, - sSize, + sSize, 1.f }, { 1.f, 0.f } },
-        { { + sSize, + sSize, + sSize, 1.f }, { 1.f, 1.f } },
+unsigned int dev_cube_create(float size) {
+    vertex_t verts[36] = {
+        {{-size, -size, -size, 1.f}, {0.f, 0.f}},
+        {{-size, +size, -size, 1.f}, {0.f, 1.f}},
+        {{+size, +size, -size, 1.f}, {1.f, 1.f}},
+        {{-size, -size, -size, 1.f}, {0.f, 0.f}},
+        {{+size, -size, -size, 1.f}, {1.f, 0.f}},
+        {{+size, +size, -size, 1.f}, {1.f, 1.f}},
 
-        { { - sSize, - sSize, + sSize, 1.f }, { 0.f, 0.f } },
-        { { - sSize, + sSize, + sSize, 1.f }, { 0.f, 1.f } },
-        { { - sSize, + sSize, - sSize, 1.f }, { 1.f, 1.f } },
-        { { - sSize, - sSize, + sSize, 1.f }, { 0.f, 0.f } },
-        { { - sSize, - sSize, - sSize, 1.f }, { 1.f, 0.f } },
-        { { - sSize, + sSize, - sSize, 1.f }, { 1.f, 1.f } },
+        {{-size, -size, +size, 1.f}, {0.f, 0.f}},
+        {{-size, +size, +size, 1.f}, {0.f, 1.f}},
+        {{+size, +size, +size, 1.f}, {1.f, 1.f}},
+        {{-size, -size, +size, 1.f}, {0.f, 0.f}},
+        {{+size, -size, +size, 1.f}, {1.f, 0.f}},
+        {{+size, +size, +size, 1.f}, {1.f, 1.f}},
 
-        { { + sSize, - sSize, + sSize, 1.f }, { 0.f, 0.f } },
-        { { + sSize, + sSize, + sSize, 1.f }, { 0.f, 1.f } },
-        { { + sSize, + sSize, - sSize, 1.f }, { 1.f, 1.f } },
-        { { + sSize, - sSize, + sSize, 1.f }, { 0.f, 0.f } },
-        { { + sSize, - sSize, - sSize, 1.f }, { 1.f, 0.f } },
-        { { + sSize, + sSize, - sSize, 1.f }, { 1.f, 1.f } },
+        {{-size, -size, +size, 1.f}, {0.f, 0.f}},
+        {{-size, +size, +size, 1.f}, {0.f, 1.f}},
+        {{-size, +size, -size, 1.f}, {1.f, 1.f}},
+        {{-size, -size, +size, 1.f}, {0.f, 0.f}},
+        {{-size, -size, -size, 1.f}, {1.f, 0.f}},
+        {{-size, +size, -size, 1.f}, {1.f, 1.f}},
 
-        { { - sSize, - sSize, - sSize, 1.f }, { 0.f, 0.f } },
-        { { - sSize, - sSize, + sSize, 1.f }, { 0.f, 1.f } },
-        { { + sSize, - sSize, + sSize, 1.f }, { 1.f, 1.f } },
-        { { - sSize, - sSize, - sSize, 1.f }, { 0.f, 0.f } },
-        { { + sSize, - sSize, - sSize, 1.f }, { 1.f, 0.f } },
-        { { + sSize, - sSize, + sSize, 1.f }, { 1.f, 1.f } },
+        {{+size, -size, +size, 1.f}, {0.f, 0.f}},
+        {{+size, +size, +size, 1.f}, {0.f, 1.f}},
+        {{+size, +size, -size, 1.f}, {1.f, 1.f}},
+        {{+size, -size, +size, 1.f}, {0.f, 0.f}},
+        {{+size, -size, -size, 1.f}, {1.f, 0.f}},
+        {{+size, +size, -size, 1.f}, {1.f, 1.f}},
 
-        { { - sSize, + sSize, - sSize, 1.f }, { 0.f, 0.f } },
-        { { - sSize, + sSize, + sSize, 1.f }, { 0.f, 1.f } },
-        { { + sSize, + sSize, + sSize, 1.f }, { 1.f, 1.f } },
-        { { - sSize, + sSize, - sSize, 1.f }, { 0.f, 0.f } },
-        { { + sSize, + sSize, - sSize, 1.f }, { 1.f, 0.f } },
-        { { + sSize, + sSize, + sSize, 1.f }, { 1.f, 1.f } },
+        {{-size, -size, -size, 1.f}, {0.f, 0.f}},
+        {{-size, -size, +size, 1.f}, {0.f, 1.f}},
+        {{+size, -size, +size, 1.f}, {1.f, 1.f}},
+        {{-size, -size, -size, 1.f}, {0.f, 0.f}},
+        {{+size, -size, -size, 1.f}, {1.f, 0.f}},
+        {{+size, -size, +size, 1.f}, {1.f, 1.f}},
+
+        {{-size, +size, -size, 1.f}, {0.f, 0.f}},
+        {{-size, +size, +size, 1.f}, {0.f, 1.f}},
+        {{+size, +size, +size, 1.f}, {1.f, 1.f}},
+        {{-size, +size, -size, 1.f}, {0.f, 0.f}},
+        {{+size, +size, -size, 1.f}, {1.f, 0.f}},
+        {{+size, +size, +size, 1.f}, {1.f, 1.f}},
     };
 
-    trap_t vbuffer = vbuffer_create( &pVertex, sizeof( pVertex ), sizeof( pVertex[ 0 ] ), gVLayout );
-    trap_t tex     = texture_create_from_file( "assets/images/dev/noise.bmp", 69 );
+    void *v = vbuffer_create(&verts, sizeof(verts), sizeof(verts[0]), _v_layout);
 
-    model_t model = model_create( vbuffer, tex );
+    if (v == (void *)0x0) {
+        LOGF_ERROR("Failed to create vertex buffer for dev cube.");
+        return 0;
+    }
 
-    u32 entity    = entity_create();
-    entity_add_transform( entity, nullptr, nullptr );
-    entity_add_model( entity, model );
+    if (_dev_image == (image_t *)0x0) {
+        _dev_image = image_create_from_file("assets/images/dev/noise.bmp", 69);
+    }
+
+    model_t *model = model_create_textured(v, _dev_image);
+
+    unsigned int entity = entity_create();
+    entity_add_transform(entity, nullptr, nullptr);
+    entity_add_model(entity, model);
 
     return entity;
 }

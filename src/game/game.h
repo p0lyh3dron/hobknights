@@ -6,16 +6,16 @@
 /*
  *    Sets up the game.
  */
-void game_setup( void );
+void game_setup(void);
 
 /*
  *    Updates the game.
  */
-void game_update( void );
+void game_update(void);
 
 /*
  *    Tears down the game.
  */
-void game_teardown( void );
+void game_teardown(void);
 
 #endif /* HOBKNIGHTS_GAME_H  */

@@ -7,25 +7,28 @@
  */
 #include "libchik.h"
 
+#include <assert.h>
 #include <math.h>
 #include <string.h>
-#include <assert.h>
 
 #include "../base/base.h"
 #include "game.h"
 
-s32 run( void ) {
-    filesystem_add_search_path( "./hobknights/" );
-    app_init( "Hobknights", ( vec3s_t ){ 1, 0, 0 } );
+#include <vulkan/vulkan.h>
 
-    if ( !base_engine_init( "./bin/libchikengine.so", "./bin/libchikgfx.so", nullptr ) ) {
-        log_fatal( "Unable to initialize the engine!\n" );
+int run(void) {
+    filesystem_add_search_path("./hobknights/");
+    app_init("Hobknights", (vec3s_t){0, 0, 0});
+
+    if (!base_engine_init("./bin/libchikengine.so", "./bin/libchikgfx.so",
+                          nullptr)) {
+        log_fatal("Unable to initialize the engine!\n");
         return 0;
     }
 
     game_setup();
 
-    while ( base_engine_update() ) {
+    while (base_engine_update()) {
         base_update_engine();
         game_update();
     }

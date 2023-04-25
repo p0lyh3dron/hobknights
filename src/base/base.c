@@ -2,9 +2,9 @@
  *    base.c    --    source for general base functionality
  *
  *    Authored by Karl "p0lyh3dron" Kreuze on June 9, 2022.
- * 
+ *
  *    This file is part of the Chik game base.
- * 
+ *
  *    The base is the core of the game functionality.
  *    This contains all the definitions for the base.
  */
@@ -12,179 +12,176 @@
 
 #include "base.h"
 
-u32 gActive = 0;
+unsigned int _active = 0;
 
 /*
  *    Nullifys the function pointers.
  */
-u32 ( *engine_init )( const s8 *modules, ... ) = 0;
+unsigned int (*engine_init)(const char *modules, ...) = 0;
 
-u32 ( *engine_update )( void ) = 0;
+unsigned int (*engine_update)(void) = 0;
 
-void *( *engine_load_function )( const s8 *spName ) = 0;
+void *(*engine_load_function)(const char *spName) = 0;
 
-void ( *engine_free )() = 0;
+void (*engine_free)() = 0;
 
+long (*stat_get_time_diff)() = 0;
 
+image_t *(*image_create_from_file)(char *, unsigned int) = 0;
 
-trap_t ( *vbuffer_create )( void *spVerts, u32 sSize, u32 sVStride, v_layout_t sLayout ) = 0;
+image_t *(*text_create)(const char *) = 0;
 
-void ( *vbuffer_free )( trap_t sVBuffer ) = 0;
+void *(*vbuffer_create)(void *, unsigned int, unsigned int, v_layout_t) = 0;
 
-trap_t ( *texture_create_from_file )( s8 *spPath, u32 sFormat ) = 0;
+void (*vbuffer_free)(void *) = 0;
 
-trap_t ( *text_create )( const s8 * ) = 0;
+void *(*mesh_create)(void *) = 0;
 
-void ( *texture_free )( trap_t sTex ) = 0;
+void (*mesh_set_vbuffer)(void *, void *) = 0;
 
-trap_t ( *mesh_create )( trap_t sVBuffer, trap_t sTex ) = 0;
+void (*mesh_append_asset)(void *, void *, unsigned long) = 0;
 
-void ( *mesh_set_skip_projection )( trap_t sMesh ) = 0;
+void (*mesh_set_asset)(void *, void *, unsigned long, unsigned long);
 
-void ( *mesh_set_skip_clipping )( trap_t sMesh ) = 0;
+void *(*mesh_get_asset)(void *, unsigned long);
 
-void ( *mesh_set_vertex_buffer )( trap_t sMesh, trap_t sVBuffer ) = 0;
+void (*mesh_draw)(void *) = 0;
 
-void ( *mesh_set_texture )( trap_t sMesh, trap_t sTex ) = 0;
+void (*mesh_free)(void *) = 0;
 
-void ( *mesh_translate )( vec3_t sTranslation ) = 0;
+mat4_t (*get_camera_view)(void *);
 
-void ( *mesh_rotate )( vec3_t sRotation ) = 0;
+void (*draw_frame)(void) = 0;
 
-void ( *mesh_scale )( vec3_t sScale ) = 0;
+void *(*create_camera)(void);
 
-void ( *mesh_draw )( trap_t sMesh ) = 0;
+void (*set_camera_position)(void *, vec3_t);
 
-void ( *mesh_free )( trap_t sMesh ) = 0;
+void (*set_camera_direction)(void *, vec2_t);
 
-mat4_t ( *get_camera_view )( trap_t sCamera ) = 0;
+void (*set_camera_fov)(void *, float);
 
-void ( *draw_frame )( void ) = 0;
+void (*set_camera)(void *);
 
-trap_t ( *create_camera )( void ) = 0;
+vec2_t (*get_screen_size)(void) = 0;
 
-void ( *set_camera_position )( trap_t sCamera, vec3_t sPosition ) = 0;
+void (*begin_render_group)(void);
 
-void ( *set_camera_direction )( trap_t sCamera, vec2_t sDirection ) = 0;
+char *(*platform_get_event)(void) = 0;
 
-void ( *set_camera_fov )( trap_t sCamera, float sFov ) = 0;
-
-void ( *set_camera )( trap_t sCamera ) = 0;
-
-vec2_t ( *get_screen_size )( void ) = 0;
-
-
-
-
-s8 *( *platform_get_event )( void ) = 0;
-
-vec2u_t ( *platform_get_joystick_event )( void ) = 0;
+vec2u_t (*platform_get_joystick_event)(void) = 0;
 
 /*
  *    Error checks a function load.
  *
- *    @param const s8 *    The name of the function to load.
- *    @param u32 *         Set this to 1 if the function is not found.
- * 
+ *    @param const char *name     The name of the function to load.
+ *    @param unsigned int *error         Set this to 1 if the function is not found.
+ *
  *    @return void *       The function pointer, or NULL if it failed.
  *                         The function pointer is cast to the correct type.
  */
-void *base_load_function( const s8 *spName, u32 *spError ) {
-    void *pRet = nullptr;
-    if ( ( pRet = engine_load_function( spName ) ) == nullptr ) {
-        log_error( "Could not load function %s.\n", spName );
-        *spError = 1;
+void *base_load_function(const char *name, unsigned int *error) {
+    void *ret = nullptr;
+
+    if ((ret = engine_load_function(name)) == nullptr) {
+        VLOGF_ERR("Could not load function %s.\n", name);
+        *error = 1;
         return nullptr;
     }
-    return pRet;
+
+    return ret;
 }
 
 /*
  *    Quits the application.
  */
-void quit() {
-    gActive = 0;
-}
+void quit() { _active = 0; }
 
 /*
  *    Initializes resources for below functions.
  *
- *    @param const s8 *    The modules to load.
- *    @param ...           The modules to load.
+ *    @param const char *modules    The modules to load.
+ *    @param ...                  The modules to load.
  *
- *    @return u32          Whether or not the initialization was successful.
+ *    @return unsigned int          Whether or not the initialization was successful.
  *                         1 = success, 0 = failure.
  */
-u32 base_engine_init( const s8 *spModules, ... ) {
-    shell_command_t commands[] = {
-        { "quit", "Quits the application.", quit },
-        { nullptr, nullptr, nullptr }
-    };
-    shell_register_commands( commands );
+unsigned int base_engine_init(const char *modules, ...) {
+    shell_command_t commands[] = {{"quit", "Quits the application.", quit},
+                                  {nullptr, nullptr, nullptr}};
+    shell_register_commands(commands);
 
-    dl_handle_t engine = dl_open( "./bin/libchikengine" DL_EXTENSION );
-    if ( engine == nullptr ) {
-        log_error( "u32 base_engine_init( const s8 *, ... ): Could not load engine library.\n" );
+    dl_handle_t engine = dl_open("./bin/libchikengine" DL_EXTENSION);
+    if (engine == nullptr) {
+        LOGF_ERR("unsigned int base_engine_init( const char *, ... ): Could not load "
+                 "engine library.\n");
         return 0;
     }
 
-    *( void** )( &engine_init )          = dl_sym( engine, "engine_init" );
-    *( void** )( &engine_update )        = dl_sym( engine, "engine_update" );
-    *( void** )( &engine_load_function ) = dl_sym( engine, "engine_load_function" );
-    *( void** )( &engine_free )          = dl_sym( engine, "engine_free" );
+    *(void **)(&engine_init)          = dl_sym(engine, "engine_init");
+    *(void **)(&engine_update)        = dl_sym(engine, "engine_update");
+    *(void **)(&engine_load_function) = dl_sym(engine, "engine_load_function");
+    *(void **)(&engine_free)          = dl_sym(engine, "engine_free");
 
-    if ( engine_init == nullptr ) {
-        log_error( "u32 base_engine_init( const s8 *, ... ): Could not find engine_init function.\n" );
+    if (engine_init == nullptr) {
+        LOGF_ERR("unsigned int base_engine_init( const char *, ... ): Could not find "
+                 "engine_init function.\n");
         return 0;
     }
-    if ( engine_update == nullptr ) {
-        log_error( "u32 base_engine_init( const s8 *, ... ): Could not find engine_update function.\n" );
+    if (engine_update == nullptr) {
+        LOGF_ERR("unsigned int base_engine_init( const char *, ... ): Could not find "
+                 "engine_update function.\n");
         return 0;
     }
-    if ( engine_load_function == nullptr ) {
-        log_error( "u32 base_engine_init( const s8 *, ... ): Could not find engine_load_function function.\n" );
+    if (engine_load_function == nullptr) {
+        LOGF_ERR("unsigned int base_engine_init( const char *, ... ): Could not find "
+                 "engine_load_function function.\n");
         return 0;
     }
-    if ( engine_free == nullptr ) {
-        log_error( "u32 base_engine_init( const s8 *, ... ): Could not find engine_free function.\n" );
-        return 0;
-    }
-
-    if ( !engine_init( "./bin/libchikengine" DL_EXTENSION, "./bin/libchikplatform" DL_EXTENSION, "./bin/libchikaudio" DL_EXTENSION, "./bin/libchikgfx" DL_EXTENSION, nullptr ) ) {
-        log_error( "u32 base_engine_init( const s8 *, ... ): Could not initialize engine.\n" );
+    if (engine_free == nullptr) {
+        LOGF_ERR("unsigned int base_engine_init( const char *, ... ): Could not find "
+                 "engine_free function.\n");
         return 0;
     }
 
-    u32 error = 0;
+    if (!engine_init("./bin/libchikengine" DL_EXTENSION,
+                     "./bin/libchikplatform" DL_EXTENSION,
+                     "./bin/libchikaudio" DL_EXTENSION,
+                     "./bin/libchikgfx" DL_EXTENSION, nullptr)) {
+        LOGF_ERR("unsigned int base_engine_init( const char *, ... ): Could not "
+                 "initialize engine.\n");
+        return 0;
+    }
 
-    *( void** )( &vbuffer_create )              = base_load_function( "vbuffer_create", &error );
-    *( void** )( &vbuffer_free )                = base_load_function( "vbuffer_free", &error );
-    *( void** )( &texture_create_from_file )    = base_load_function( "texture_create_from_file", &error );
-    *( void** )( &text_create )                 = base_load_function( "text_create", &error );
-    *( void** )( &texture_free )                = base_load_function( "texture_free", &error );
-    *( void** )( &mesh_create )                 = base_load_function( "mesh_create", &error );
-    *( void** )( &mesh_set_skip_projection )    = base_load_function( "mesh_set_skip_projection", &error );
-    *( void** )( &mesh_set_skip_clipping )      = base_load_function( "mesh_set_skip_clipping", &error );
-    *( void** )( &mesh_set_vertex_buffer )      = base_load_function( "mesh_set_vertex_buffer", &error );
-    *( void** )( &mesh_set_texture )            = base_load_function( "mesh_set_texture", &error );
-    *( void** )( &mesh_translate )              = base_load_function( "mesh_translate", &error );
-    *( void** )( &mesh_rotate )                 = base_load_function( "mesh_rotate", &error );
-    *( void** )( &mesh_scale )                  = base_load_function( "mesh_scale", &error );
-    *( void** )( &mesh_draw )                   = base_load_function( "mesh_draw", &error );
-    *( void** )( &mesh_free )                   = base_load_function( "mesh_free", &error );
-    *( void** )( &get_camera_view )             = base_load_function( "get_camera_view", &error );
-    *( void** )( &draw_frame )                  = base_load_function( "draw_frame", &error );
-    *( void** )( &create_camera )               = base_load_function( "create_camera", &error );
-    *( void** )( &set_camera_position )         = base_load_function( "set_camera_position", &error );
-    *( void** )( &set_camera_direction )        = base_load_function( "set_camera_direction", &error );
-    *( void** )( &set_camera_fov )              = base_load_function( "set_camera_fov", &error );
-    *( void** )( &set_camera )                  = base_load_function( "set_camera", &error );
-    *( void** )( &get_screen_size )             = base_load_function( "get_screen_size", &error );
+    unsigned int error = 0;
 
-    *( void** )( &platform_get_event )          = base_load_function( "platform_get_event", &error );
-    *( void** )( &platform_get_joystick_event ) = base_load_function( "platform_get_joystick_event", &error );
+    *(void **)(&stat_get_time_diff) = base_load_function("stat_get_time_diff", &error);
 
-    gActive = 1;
+    *(void **)(&image_create_from_file) = base_load_function("image_create_from_file", &error);
+    *(void **)(&text_create)            = base_load_function("text_create", &error);
+    *(void **)(&vbuffer_create)         = base_load_function("vbuffer_create", &error);
+    *(void **)(&vbuffer_free)           = base_load_function("vbuffer_free", &error);
+    *(void **)(&mesh_create)            = base_load_function("mesh_create", &error);
+    *(void **)(&mesh_set_vbuffer)       = base_load_function("mesh_set_vbuffer", &error);
+    *(void **)(&mesh_append_asset)      = base_load_function("mesh_append_asset", &error);
+    *(void **)(&mesh_get_asset)         = base_load_function("mesh_get_asset", &error);
+    *(void **)(&mesh_set_asset)         = base_load_function("mesh_set_asset", &error);
+    *(void **)(&mesh_draw)              = base_load_function("mesh_draw", &error);
+    *(void **)(&mesh_free)              = base_load_function("mesh_free", &error);
+    *(void **)(&get_camera_view)        = base_load_function("get_camera_view", &error);
+    *(void **)(&draw_frame)             = base_load_function("draw_frame", &error);
+    *(void **)(&create_camera)          = base_load_function("create_camera", &error);
+    *(void **)(&set_camera_position)    = base_load_function("set_camera_position", &error);
+    *(void **)(&set_camera_direction)   = base_load_function("set_camera_direction", &error);
+    *(void **)(&set_camera_fov)         = base_load_function("set_camera_fov", &error);
+    *(void **)(&set_camera)             = base_load_function("set_camera", &error);
+    *(void **)(&get_screen_size)        = base_load_function("get_screen_size", &error);
+    *(void **)(&begin_render_group)     = base_load_function("begin_render_group", &error);
+
+    *(void **)(&platform_get_event)          = base_load_function("platform_get_event", &error);
+    *(void **)(&platform_get_joystick_event) = base_load_function("platform_get_joystick_event", &error);
+
+    _active = 1;
 
     return !error;
 }
@@ -192,22 +189,23 @@ u32 base_engine_init( const s8 *spModules, ... ) {
 /*
  *    Updates the engine and checks the game state.
  *
- *    @return u32          Whether or not the game is still running.
+ *    @return unsigned int          Whether or not the game is still running.
  */
-u32 base_engine_update( void ) {
-    return engine_update() && gActive;
-}
+unsigned int base_engine_update(void) { return engine_update() && _active; }
+
+/*
+ *    Returns the delta time between frames in seconds.
+ *
+ *    @return float      The delta time.
+ */
+float base_get_dt(void) { return stat_get_time_diff() / 1000000.f; }
 
 /*
  *    Frees resources for below functions.
  */
-void base_free_engine_resources() {
-    engine_free();
-}
+void base_free_engine_resources() { engine_free(); }
 
 /*
  *    Updates the engine.
  */
-void base_update_engine() {
-    engine_update();
-}
+void base_update_engine() { engine_update(); }

@@ -4,24 +4,24 @@
 
 #define PLAYERSPEED 1
 
-extern s32 gActive;
+extern int _active;
 
-e_transform_t *gpTransform = nullptr;
-e_driveable_t *gpDriveable = nullptr;
+e_transform_t *_trans = nullptr;
+e_driveable_t *_drive = nullptr;
 
 /*
  *    Sets the driven entity.
  *
- *    @param u32    The entity id.
+ *    @param unsigned int    The entity id.
  */
-void drive_set_driven_entity( u32 sId ) {
-    gpTransform = entity_get_transform( sId );
-    gpDriveable = entity_get_driveable( sId );
+void drive_set_driven_entity(unsigned int sId) {
+    _trans = entity_get_transform(sId);
+    _drive = entity_get_driveable(sId);
 
-    if ( !gpTransform || !gpDriveable ) {
-        gpTransform = nullptr;
-        gpDriveable = nullptr;
-        log_error( "Entity is not transformable or drivable!\n" );
+    if (!_trans || !_drive) {
+        _trans = nullptr;
+        _drive = nullptr;
+        log_error("Entity is not transformable or drivable!\n");
         return;
     }
 }
@@ -30,50 +30,66 @@ void drive_set_driven_entity( u32 sId ) {
  *    Drives the driven entity.
  */
 void drive_drive_driven_entity() {
-    if ( !gpTransform || !gpDriveable ) {
+    if (!_trans || !_drive) {
         return;
     }
-    switch ( gpDriveable->aMoveType ) {
-        case DRIVE_NOCLIP: {
-            s8 *pEvent = platform_get_event();
-            while ( pEvent != nullptr ) {
-                if ( strncmp( pEvent, "esc\0", 4 ) == 0 ) {
-                    gActive = 0;
-                }
-                if ( strncmp( pEvent, "w\0", 2 ) == 0 ) {
-                    gpTransform->aPosition.z += 0.1f * cosf( gpTransform->aRotation.y ) * cosf( gpTransform->aRotation.x ) * PLAYERSPEED;
-                    gpTransform->aPosition.x -= 0.1f * sinf( gpTransform->aRotation.y ) * cosf( gpTransform->aRotation.x ) * PLAYERSPEED;
-                    gpTransform->aPosition.y += 0.1f * sinf( gpTransform->aRotation.x ) * PLAYERSPEED;
-                }
-                if ( strncmp( pEvent, "a\0", 2 ) == 0 ) {
-                    gpTransform->aPosition.x -= 0.1f * cosf( gpTransform->aRotation.y ) * PLAYERSPEED;
-                    gpTransform->aPosition.z -= 0.1f * sinf( gpTransform->aRotation.y ) * PLAYERSPEED;
-                }
-                if ( strncmp( pEvent, "s\0", 2 ) == 0 ) {
-                    gpTransform->aPosition.z -= 0.1f * cosf( gpTransform->aRotation.y ) * cosf( gpTransform->aRotation.x ) * PLAYERSPEED;
-                    gpTransform->aPosition.x += 0.1f * sinf( gpTransform->aRotation.y ) * cosf( gpTransform->aRotation.x ) * PLAYERSPEED;
-                    gpTransform->aPosition.y -= 0.1f * sinf( gpTransform->aRotation.x ) * PLAYERSPEED;
-                }
-                if ( strncmp( pEvent, "d\0", 2 ) == 0 ) {
-                    gpTransform->aPosition.x += 0.1f * cosf( gpTransform->aRotation.y ) * PLAYERSPEED;
-                    gpTransform->aPosition.z += 0.1f * sinf( gpTransform->aRotation.y ) * PLAYERSPEED;
-                }
-                if ( strncmp( pEvent, "space\0", 6 ) == 0 ) {
-                    gpTransform->aPosition.y += 0.1f * PLAYERSPEED;
-                }
-                if ( strncmp( pEvent, "lctrl\0", 7 ) == 0 ) {
-                    gpTransform->aPosition.y -= 0.1f * PLAYERSPEED;
-                }
-                pEvent = platform_get_event();
+    switch (_drive->move_type) {
+    case DRIVE_NOCLIP: {
+        char *pEvent = platform_get_event();
+        while (pEvent != nullptr) {
+            if (strncmp(pEvent, "esc\0", 4) == 0) {
+                _active = 0;
             }
-            vec2u_t mouse = platform_get_joystick_event();
-            gpTransform->aRotation.x -= ( float )mouse.y / 500.f;
-            gpTransform->aRotation.y -= ( float )mouse.x / 500.f;
-            
-            gpTransform->aRotation.x = MAX( gpTransform->aRotation.x, -3.14159f / 2.f );
-            gpTransform->aRotation.x = MIN( gpTransform->aRotation.x,  3.14159f / 2.f );
-            break;
+            if (strncmp(pEvent, "w\0", 2) == 0) {
+                _trans->pos.z +=
+                    0.1f * cosf(_trans->rot.y) *
+                    cosf(_trans->rot.x) * PLAYERSPEED;
+                _trans->pos.x -=
+                    0.1f * sinf(_trans->rot.y) *
+                    cosf(_trans->rot.x) * PLAYERSPEED;
+                _trans->pos.y +=
+                    0.1f * sinf(_trans->rot.x) * PLAYERSPEED;
+            }
+            if (strncmp(pEvent, "a\0", 2) == 0) {
+                _trans->pos.x -=
+                    0.1f * cosf(_trans->rot.y) * PLAYERSPEED;
+                _trans->pos.z -=
+                    0.1f * sinf(_trans->rot.y) * PLAYERSPEED;
+            }
+            if (strncmp(pEvent, "s\0", 2) == 0) {
+                _trans->pos.z -=
+                    0.1f * cosf(_trans->rot.y) *
+                    cosf(_trans->rot.x) * PLAYERSPEED;
+                _trans->pos.x +=
+                    0.1f * sinf(_trans->rot.y) *
+                    cosf(_trans->rot.x) * PLAYERSPEED;
+                _trans->pos.y -=
+                    0.1f * sinf(_trans->rot.x) * PLAYERSPEED;
+            }
+            if (strncmp(pEvent, "d\0", 2) == 0) {
+                _trans->pos.x +=
+                    0.1f * cosf(_trans->rot.y) * PLAYERSPEED;
+                _trans->pos.z +=
+                    0.1f * sinf(_trans->rot.y) * PLAYERSPEED;
+            }
+            if (strncmp(pEvent, "space\0", 6) == 0) {
+                _trans->pos.y += 0.1f * PLAYERSPEED;
+            }
+            if (strncmp(pEvent, "lctrl\0", 7) == 0) {
+                _trans->pos.y -= 0.1f * PLAYERSPEED;
+            }
+            pEvent = platform_get_event();
         }
+        vec2u_t mouse = platform_get_joystick_event();
+        _trans->rot.x -= (float)mouse.y / 500.f;
+        _trans->rot.y -= (float)mouse.x / 500.f;
+
+        _trans->rot.x =
+            MAX(_trans->rot.x, -3.14159f / 2.f);
+        _trans->rot.x =
+            MIN(_trans->rot.x, 3.14159f / 2.f);
+        break;
+    }
         /*
          *    Clip movement is not yet implemented.
          */

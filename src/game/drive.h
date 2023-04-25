@@ -5,9 +5,9 @@
 /*
  *    Sets the driven entity.
  *
- *    @param u32    The entity id.
+ *    @param unsigned int    The entity id.
  */
-void drive_set_driven_entity( u32 sId );
+void drive_set_driven_entity(unsigned int sId);
 
 /*
  *    Drives the driven entity.

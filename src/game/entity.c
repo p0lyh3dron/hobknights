@@ -1,38 +1,40 @@
 #include "entity.h"
 
-entity_flag_e gEntityFlags[ MAX_ENTITIES ] = { 0 };
+#include "shader.h"
 
-e_transform_t gTransforms[ MAX_ENTITIES ]  = { 0 };
-e_driveable_t gDriveables[ MAX_ENTITIES ]  = { 0 };
-e_camera_t    gCameras   [ MAX_ENTITIES ]  = { 0 };
-e_light_t     gLights    [ MAX_ENTITIES ]  = { 0 };
-e_model_t     gModels    [ MAX_ENTITIES ]  = { 0 };
+entity_flag_e _entity_flags[MAX_ENTITIES] = {0};
+
+e_transform_t _transforms[MAX_ENTITIES] = {0};
+e_driveable_t _driveables[MAX_ENTITIES] = {0};
+e_camera_t    _cameras[MAX_ENTITIES]    = {0};
+e_light_t     _lights[MAX_ENTITIES]     = {0};
+e_model_t     _models[MAX_ENTITIES]     = {0};
 
 /*
  *    Sets up entity system.
  */
-void entity_setup( void ) {
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        gEntityFlags[ i ]    = ENTITY_NONE;
-        gTransforms[ i ].aId = -1;
-        gDriveables[ i ].aId = -1;
-        gCameras[ i ].aId    = -1;
-        gLights[ i ].aId     = -1;
-        gModels[ i ].aId     = -1;
+void entity_setup(void) {
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++) {
+        _entity_flags[i]    = ENTITY_NONE;
+        _transforms[i].id = -1;
+        _driveables[i].id = -1;
+        _cameras[i].id    = -1;
+        _lights[i].id     = -1;
+        _models[i].id      = -1;
     }
 }
 
 /*
  *    Creates an entity.
  *
- *    @return u32    The entity id, 0 if failed.
+ *    @return unsigned int    The entity id, 0 if failed.
  */
-u32 entity_create( void ) {
-    u64 i;
-    for( i = 0; i < MAX_ENTITIES; i++ ) {
-        if( gEntityFlags[ i ] == ENTITY_NONE ) {
-            gEntityFlags[ i ] = ENTITY_PRESENT;
+unsigned int entity_create(void) {
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++) {
+        if (_entity_flags[i] == ENTITY_NONE) {
+            _entity_flags[i] = ENTITY_PRESENT;
             return i;
         }
     }
@@ -42,76 +44,72 @@ u32 entity_create( void ) {
 /*
  *    Adds a transform component to an entity.
  *
- *    @param u32         The entity id.
- *    @param vec3_t *    The position.
- *    @param vec2_t *    The rotation.
+ *    @param unsigned int id        The entity id.
+ *    @param vec3_t      *pos       The position.
+ *    @param vec2_t      *rot       The rotation.
  *
- *    @return u32        1 if the component was added, 0 if not.
+ *    @return unsigned int        1 if the component was added, 0 if not.
  */
-u32 entity_add_transform( u32 sId, vec3_t *spPosition, vec2_t *spRotation ) {
-    if ( gEntityFlags[ sId ] != ENTITY_PRESENT ) {
+unsigned int entity_add_transform(unsigned int id, vec3_t *pos, vec2_t *rot) {
+    if (_entity_flags[id] != ENTITY_PRESENT)
         return 0;
-    }
 
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        if ( gTransforms[ i ].aId == -1 ) {
-            gTransforms[ i ].aId       = sId;
-            if ( spPosition == nullptr ) {
-                gTransforms[ i ].aPosition = ( vec3_t ){ 0.f, 0.f, 0.f };
-            }
-            else {
-                gTransforms[ i ].aPosition = *spPosition;
-            }
-            if ( spRotation == nullptr ) {
-                gTransforms[ i ].aRotation = ( vec2_t ){ 0.f, 0.f };
-            }
-            else {
-                gTransforms[ i ].aRotation = *spRotation;
-            }
-            gTransforms[ i ].aScale = ( vec3_t ){ 1.f, 1.f, 1.f };
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++) {
+        if (_transforms[i].id == -1) {
+            _transforms[i].id = id;
+            if (pos == (vec3_t *)0x0)
+                _transforms[i].pos = (vec3_t){0.f, 0.f, 0.f};
+            else
+                _transforms[i].pos = *pos;
+
+            if (rot == (vec2_t *)0x0)
+                _transforms[i].rot = (vec2_t){0.f, 0.f};
+            else
+                _transforms[i].rot = *rot;
+
+            _transforms[i].scale = (vec3_t){1.f, 1.f, 1.f};
             return 1;
         }
     }
+
     return 0;
 }
 
 /*
  *    Returns a transform component from an entity.
  *
- *    @param u32                 The entity id.
+ *    @param unsigned int id                The entity id.
  *
  *    @return e_transform_t *    The transform component, NULL if not found.
  */
-e_transform_t *entity_get_transform( u32 sId ) {
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        if ( gTransforms[ i ].aId == sId ) {
-            return &gTransforms[ i ];
-        }
-    }
-    return nullptr;
+e_transform_t *entity_get_transform(unsigned int id) {
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++)
+        if (_transforms[i].id == id)
+            return &_transforms[i];
+
+    return (e_transform_t *)0x0;
 }
 
 /*
  *    Adds a driveable component to an entity.
  *
- *    @param u32                      The entity id.
- *    @param e_drivable_movetype_e *  The move type.
- * 
- *    @return u32                     1 if the component was added, 0 if not.
+ *    @param unsigned int           id         The entity id.
+ *    @param e_drivable_movetype_e *move_type  The move type.
+ *
+ *    @return unsigned int                     1 if the component was added, 0 if not.
  */
-u32 entity_add_driveable( u32 sId, e_drivable_movetype_e *spMoveType ) {
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        if ( gDriveables[ i ].aId == -1 ) {
-            gDriveables[ i ].aId       = sId;
-            if ( spMoveType == nullptr ) {
-                gDriveables[ i ].aMoveType = DRIVE_NOCLIP;
-            }
-            else {
-                gDriveables[ i ].aMoveType = *spMoveType;
-            }
+unsigned int entity_add_driveable(unsigned int id, e_drivable_movetype_e *move_type) {
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++) {
+        if (_driveables[i].id == -1) {
+            _driveables[i].id = id;
+            if (move_type == (e_drivable_movetype_e *)0x0)
+                _driveables[i].move_type = DRIVE_NOCLIP;
+            else
+                _driveables[i].move_type = *move_type;
+
             return 1;
         }
     }
@@ -121,163 +119,167 @@ u32 entity_add_driveable( u32 sId, e_drivable_movetype_e *spMoveType ) {
 /*
  *    Returns a driveable component from an entity.
  *
- *    @param u32                 The entity id.
+ *    @param unsigned int id                The entity id.
  *
  *    @return e_driveable_t *    The driveable component, NULL if not found.
  */
-e_driveable_t *entity_get_driveable( u32 sId ) {
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        if ( gDriveables[ i ].aId == sId ) {
-            return &gDriveables[ i ];
-        }
-    }
-    return nullptr;
+e_driveable_t *entity_get_driveable(unsigned int id) {
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++)
+        if (_driveables[i].id == id)
+            return &_driveables[i];
+
+    return (e_driveable_t *)0x0;
 }
 
 /*
  *    Adds a camera component to an entity.
  *
- *    @param u32         The entity id.
- *    @param vec3_t *    The origin offset.
+ *    @param unsigned int id               The entity id.
+ *    @param vec3_t      *origin_offset    The origin offset.
  *
- *    @return u32        1 if the component was added, 0 if not.
+ *    @return unsigned int        1 if the component was added, 0 if not.
  */
-u32 entity_add_camera( u32 sId, vec3_t *spOriginOffset ) {
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        if ( gCameras[ i ].aId == -1 ) {
-            gCameras[ i ].aId       = sId;
-            if ( spOriginOffset == nullptr ) {
-                gCameras[ i ].aOriginOffset = ( vec3_t ){ 0.f, 0.f, 0.f };
-            }
-            else {
-                gCameras[ i ].aOriginOffset = *spOriginOffset;
-            }
+unsigned int entity_add_camera(unsigned int id, vec3_t *origin_offset) {
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++) {
+        if (_cameras[i].id == -1) {
+            _cameras[i].id = id;
+            if (origin_offset == (vec3_t *)0x0)
+                _cameras[i].origin_offset = (vec3_t){0.f, 0.f, 0.f};
+            else
+                _cameras[i].origin_offset = *origin_offset;
+
             return 1;
         }
     }
+
     return 0;
 }
 
 /*
  *    Returns a camera component from an entity.
  *
- *    @param u32         The entity id.
+ *    @param unsigned int id        The entity id.
  *
  *    @return e_camera_t *    The camera component, NULL if not found.
  */
-e_camera_t *entity_get_camera( u32 sId ) {
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        if ( gCameras[ i ].aId == sId ) {
-            return &gCameras[ i ];
-        }
-    }
-    return nullptr;
+e_camera_t *entity_get_camera(unsigned int id) {
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++)
+        if (_cameras[i].id == id)
+            return &_cameras[i];
+
+    return (e_camera_t *)0x0;
 }
 
 /*
  *    Adds a light component to an entity.
  *
- *    @param u32         The entity id.
- *    @param vec3_t      The color.
- *    @param f32         The intensity.
- * 
- *    @return u32        1 if the component was added, 0 if not.
+ *    @param unsigned int id         The entity id.
+ *    @param vec3_t       color      The color.
+ *    @param float        intensity  The intensity.
+ *
+ *    @return unsigned int        1 if the component was added, 0 if not.
  */
-u32 entity_add_light( u32 sId, vec3_t sColor, f32 sIntensity ) {
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        if ( gLights[ i ].aId == -1 ) {
-            gLights[ i ].aId        = sId;
-            gLights[ i ].aColor     = sColor;
-            gLights[ i ].aIntensity = sIntensity;
+unsigned int entity_add_light(unsigned int id, vec3_t color, float intensity) {
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++) {
+        if (_lights[i].id == -1) {
+            _lights[i].id        = id;
+            _lights[i].color      = color;
+            _lights[i].intensity = intensity;
             return 1;
         }
     }
+
     return 0;
 }
 
 /*
  *    Returns a light component from an entity.
  *
- *    @param u32         The entity id.
+ *    @param unsigned int id        The entity id.
  *
  *    @return e_light_t *    The light component, NULL if not found.
  */
-e_light_t *entity_get_light( u32 sId ) {
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        if ( gLights[ i ].aId == sId ) {
-            return &gLights[ i ];
-        }
-    }
-    return nullptr;
+e_light_t *entity_get_light(unsigned int id) {
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++)
+        if (_lights[i].id == id)
+            return &_lights[i];
+
+    return (e_light_t *)0x0;
 }
 
 /*
  *    Adds a model component to an entity.
  *
- *    @param u32         The entity id.
- *    @param model_t     The model.
- * 
- *    @return u32        1 if the component was added, 0 if not.
+ *    @param unsigned int id            The entity id.
+ *    @param model_t     *model         The model.
+ *
+ *    @return unsigned int        1 if the component was added, 0 if not.
  */
-u32 entity_add_model( u32 sId, model_t sModel ) {
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        if ( gModels[ i ].aId == -1 ) {
-            gModels[ i ].aId       = sId;
-            gModels[ i ].aModel    = sModel;
+unsigned int entity_add_model(unsigned int id, model_t *model) {
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++) {
+        if (_models[i].id == -1) {
+            _models[i].id    = id;
+            _models[i].model = model;
             return 1;
         }
     }
+
     return 0;
 }
 
 /*
  *    Returns a model component from an entity.
  *
- *    @param u32         The entity id.
+ *    @param unsigned int id        The entity id.
  *
  *    @return e_model_t *    The model component, NULL if not found.
  */
-e_model_t *entity_get_model( u32 sId ) {
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        if ( gModels[ i ].aId == sId ) {
-            return &gModels[ i ];
-        }
-    }
-    return nullptr;
+e_model_t *entity_get_model(unsigned int id) {
+    unsigned long i;
+    for (i = 0; i < MAX_ENTITIES; i++)
+        if (_models[i].id == id)
+            return &_models[i];
+
+    return (e_model_t *)0x0;
 }
 
 /*
  *    Removes an entity.
  *
- *    @param u32    The entity id.
+ *    @param unsigned int id   The entity id.
  */
-void entity_remove( u32 sId ) {
-    gEntityFlags[ sId ] = ENTITY_NONE;
-}
+void entity_remove(unsigned int id) { _entity_flags[id] = ENTITY_NONE; }
 
 /*
  *    Updates all entities.
  */
-void entity_update( void ) {
-    s64 i;
-    for ( i = 0; i < MAX_ENTITIES; i++ ) {
-        if ( gEntityFlags[ i ] == ENTITY_PRESENT ) {
-            e_model_t *pModel     = entity_get_model( i );
-            e_transform_t *pTrans = entity_get_transform( i );
-            if ( pModel != nullptr ) {
-                if ( pTrans ) {
-                    pModel->aModel.aPos   = pTrans->aPosition;
-                    pModel->aModel.aRot   = ( vec3_t ){ pTrans->aRotation.x, pTrans->aRotation.y };
-                    pModel->aModel.aScale = pTrans->aScale;
+void entity_update(void) {
+    long i;
+    for (i = 0; i < MAX_ENTITIES; i++) {
+        if (_entity_flags[i] == ENTITY_PRESENT) {
+            e_model_t     *model = entity_get_model(i);
+            e_transform_t *trans = entity_get_transform(i);
+            if (model != nullptr) {
+                if (trans) {
+                    model->model->pos   = trans->pos;
+                    model->model->aRot  = (vec3_t){trans->rot.x, trans->rot.y};
+                    model->model->scale = trans->scale;
+
+                    shader_set_position(&model->model->pos);
+                    shader_set_rotation(&model->model->aRot);
+                    shader_set_scale(&model->model->scale);
+                } else {
+                    shader_set_position(nullptr);
+                    shader_set_rotation(nullptr);
+                    shader_set_scale(nullptr);
                 }
-                model_draw( &pModel->aModel );
+                model_draw(model->model);
             }
         }
     }
