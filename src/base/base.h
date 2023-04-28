@@ -77,6 +77,16 @@ extern char *(*platform_get_event)(void);
 
 extern vec2u_t (*platform_get_joystick_event)(void);
 
+
+
+extern void *(*audio_create_from_file)(const char *path, unsigned int loop);
+
+extern unsigned int (*audio_play)(void *audio);
+
+extern unsigned int (*audio_stop)(void *audio);
+
+extern unsigned int (*audio_set_listener_position)(void *, vec3_t, vec3_t, vec2_t);
+
 /*
  *    Error checks a function load.
  *

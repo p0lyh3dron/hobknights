@@ -71,6 +71,16 @@ char *(*platform_get_event)(void) = 0;
 
 vec2u_t (*platform_get_joystick_event)(void) = 0;
 
+
+
+void *(*audio_create_from_file)(const char *path, unsigned int loop);
+
+unsigned int (*audio_play)(void *audio);
+
+unsigned int (*audio_stop)(void *audio);
+
+unsigned int (*audio_set_listener_position)(void *, vec3_t, vec3_t, vec2_t);
+
 /*
  *    Error checks a function load.
  *
@@ -180,6 +190,12 @@ unsigned int base_engine_init(const char *modules, ...) {
 
     *(void **)(&platform_get_event)          = base_load_function("platform_get_event", &error);
     *(void **)(&platform_get_joystick_event) = base_load_function("platform_get_joystick_event", &error);
+
+    *(void **)(&audio_create_from_file)                 = base_load_function("audio_create_from_file", &error);
+    *(void **)(&audio_play)                             = base_load_function("audio_play", &error);
+    *(void **)(&audio_stop)                             = base_load_function("audio_stop", &error);
+    *(void **)(&audio_set_listener_position)            = base_load_function("audio_set_listener_position", &error);
+
 
     _active = 1;
 

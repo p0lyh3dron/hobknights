@@ -12,6 +12,7 @@ e_transform_t *_player_pos;
 e_camera_t    *_camera;
 
 void *_cam;
+void *_mus;
 
 int _light_1;
 int _light_2;
@@ -77,6 +78,9 @@ void game_setup(void) {
 
     set_camera_fov(_cam, 60.f);
     set_camera(_cam);
+
+    _mus = audio_create_from_file("assets/music/test.wav", true);
+    audio_play(_mus);
 }
 
 float t = 0.f;
@@ -108,6 +112,8 @@ void game_update(void) {
 
     set_camera_position(_cam, cam);
     set_camera_direction(_cam, _player_pos->rot);
+
+    audio_set_listener_position(_mus, (vec3_t){0.f, 0.f, 0.f}, _player_pos->pos, _player_pos->rot);
 
     entity_update();
 
