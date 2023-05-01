@@ -17,6 +17,8 @@ typedef enum {
 typedef struct {
     int                   id;
     float                 speed;
+    vec3_t                velocity;
+    vec3_t                acceleration;
     e_drivable_movetype_e move_type;
 } e_driveable_t;
 

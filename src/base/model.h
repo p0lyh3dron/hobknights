@@ -10,6 +10,8 @@
  */
 #pragma once
 
+#define BASE_MODELS_MAX 256
+
 #include "libchik.h"
 
 typedef struct {
@@ -17,8 +19,12 @@ typedef struct {
     vec3_t aRot;
     vec3_t scale;
 
-    void *mesh;
+    void          *mesh;
+    vec3_t        *collision_mesh;
+    unsigned long  num_collision_verts;
 } model_t;
+
+extern model_t *_model_list[BASE_MODELS_MAX];
 
 /*
  *    Creates a model with raw vertex data.
@@ -30,18 +36,22 @@ typedef struct {
  *
  *    @return model_t *      The model.
  */
-model_t *model_create_raw(void *vert, unsigned int size, unsigned int stride,
+model_t *model_create(void *vert, unsigned int size, unsigned int stride,
                           v_layout_t layout);
 
 /*
- *    Creates a model and its mesh.
+ *    Creates a model with raw vertex data.
  *
- *    @param void    *v     The vertex buffer.
- *    @param image_t *i     The texture.
+ *    @param void *vert           The raw vertex data.
+ *    @param unsigned int size             The size of the vertex data.
+ *    @param unsigned int stride           The stride of the vertex data.
+ *    @param v_layout_t layout    The layout of the vertex data.
+ *    @param image_t *i           The image.
  *
- *    @return model_t *    The model.
+ *    @return model_t *      The model.
  */
-model_t *model_create_textured(void *v, image_t *i);
+model_t *model_create_textured(void *vert, unsigned int size, unsigned int stride,
+                               v_layout_t layout, image_t *i);
 
 /*
  *    Set's a model's mesh vertex data.

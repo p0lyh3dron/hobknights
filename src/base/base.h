@@ -18,6 +18,7 @@
 #include "shaderops.h"
 #include "text.h"
 #include "types.h"
+#include "collision.h"
 
 /*
  *    Declare function pointers for the base that are defined

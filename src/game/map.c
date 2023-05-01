@@ -12,7 +12,7 @@
  *    @return unsigned int       Entity id of the map.
  */
 unsigned int map_test_create(vec3_t c, float s) {
-    unsigned int map = dev_cube_create(s);
+    unsigned int map = dev_plane_create(s);
 
     e_transform_t *trans = entity_get_transform(map);
     trans->pos     = c;

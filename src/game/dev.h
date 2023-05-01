@@ -14,4 +14,13 @@ extern image_t *_dev_image;
  */
 unsigned int dev_cube_create(float size);
 
+/*
+ *    Create a developer plane entity with a model and transform.
+ *
+ *    @param float size     The size of the plane.
+ * 
+ *    @return unsigned int    The entity ID of the plane.
+ */
+unsigned int dev_plane_create(float size);
+
 #endif /* HOBKNIGHTS_DEV_H  */
