@@ -14,13 +14,11 @@
 #include "../base/base.h"
 #include "game.h"
 
-#include <vulkan/vulkan.h>
-
 int run(void) {
     filesystem_add_search_path("./hobknights/");
     app_init("Hobknights", (vec3s_t){0, 0, 0});
 
-    if (!base_engine_init("./bin/libchikengine.so", "./bin/libchikgfx.so",
+    if (!base_engine_init("./bin/chikengine", "./bin/chikgfx", "./bin/ch_core",
                           nullptr)) {
         log_fatal("Unable to initialize the engine!\n");
         return 0;

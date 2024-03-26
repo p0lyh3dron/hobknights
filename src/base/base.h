@@ -72,6 +72,8 @@ extern void (*set_camera)(void *);
 
 extern vec2_t (*get_screen_size)(void);
 
+extern void *(*rendertarget_get_backbuffer)(void);
+
 extern void (*begin_render_group)(void);
 
 extern char *(*platform_get_event)(void);

@@ -9,7 +9,9 @@
  */
 #include "sprite.h"
 
+#ifdef __unix__
 #include <dirent.h>
+#endif
 
 #include "base.h"
 #include "shaderops.h"
@@ -123,7 +125,8 @@ void sprite_render(sprite_t *sprite) {
  *    @return avatar_t     The avatar.
  */
 avatar_t avatar_init_dir(const char *path) {
-    avatar_t       avatar;
+    avatar_t avatar;
+#if 0
     DIR           *dir;
     struct dirent *entry;
     unsigned int   i = 0;
@@ -145,6 +148,7 @@ avatar_t avatar_init_dir(const char *path) {
     }
 
     avatar.count = i;
+#endif
 
     return avatar;
 }
@@ -164,7 +168,7 @@ avatar_t avatar_init(const char *path) {}
  *    @param avatar_t *avatar    The avatar to render.
  */
 void avatar_render(avatar_t *avatar) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < avatar->count; i++)
         sprite_render(&avatar->sprites[i]);
 }

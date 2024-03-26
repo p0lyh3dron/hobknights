@@ -14,7 +14,7 @@ e_model_t     _models[MAX_ENTITIES]     = {0};
  *    Sets up entity system.
  */
 void entity_setup(void) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++) {
         _entity_flags[i]    = ENTITY_NONE;
         _transforms[i].id = -1;
@@ -31,7 +31,7 @@ void entity_setup(void) {
  *    @return unsigned int    The entity id, 0 if failed.
  */
 unsigned int entity_create(void) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++) {
         if (_entity_flags[i] == ENTITY_NONE) {
             _entity_flags[i] = ENTITY_PRESENT;
@@ -54,7 +54,7 @@ unsigned int entity_add_transform(unsigned int id, vec3_t *pos, vec2_t *rot) {
     if (_entity_flags[id] != ENTITY_PRESENT)
         return 0;
 
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++) {
         if (_transforms[i].id == -1) {
             _transforms[i].id = id;
@@ -84,7 +84,7 @@ unsigned int entity_add_transform(unsigned int id, vec3_t *pos, vec2_t *rot) {
  *    @return e_transform_t *    The transform component, NULL if not found.
  */
 e_transform_t *entity_get_transform(unsigned int id) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++)
         if (_transforms[i].id == id)
             return &_transforms[i];
@@ -101,7 +101,7 @@ e_transform_t *entity_get_transform(unsigned int id) {
  *    @return unsigned int                     1 if the component was added, 0 if not.
  */
 unsigned int entity_add_driveable(unsigned int id, e_drivable_movetype_e *move_type) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++) {
         if (_driveables[i].id == -1) {
             _driveables[i].id = id;
@@ -124,7 +124,7 @@ unsigned int entity_add_driveable(unsigned int id, e_drivable_movetype_e *move_t
  *    @return e_driveable_t *    The driveable component, NULL if not found.
  */
 e_driveable_t *entity_get_driveable(unsigned int id) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++)
         if (_driveables[i].id == id)
             return &_driveables[i];
@@ -141,7 +141,7 @@ e_driveable_t *entity_get_driveable(unsigned int id) {
  *    @return unsigned int        1 if the component was added, 0 if not.
  */
 unsigned int entity_add_camera(unsigned int id, vec3_t *origin_offset) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++) {
         if (_cameras[i].id == -1) {
             _cameras[i].id = id;
@@ -165,7 +165,7 @@ unsigned int entity_add_camera(unsigned int id, vec3_t *origin_offset) {
  *    @return e_camera_t *    The camera component, NULL if not found.
  */
 e_camera_t *entity_get_camera(unsigned int id) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++)
         if (_cameras[i].id == id)
             return &_cameras[i];
@@ -183,7 +183,7 @@ e_camera_t *entity_get_camera(unsigned int id) {
  *    @return unsigned int        1 if the component was added, 0 if not.
  */
 unsigned int entity_add_light(unsigned int id, vec3_t color, float intensity) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++) {
         if (_lights[i].id == -1) {
             _lights[i].id        = id;
@@ -204,7 +204,7 @@ unsigned int entity_add_light(unsigned int id, vec3_t color, float intensity) {
  *    @return e_light_t *    The light component, NULL if not found.
  */
 e_light_t *entity_get_light(unsigned int id) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++)
         if (_lights[i].id == id)
             return &_lights[i];
@@ -221,7 +221,7 @@ e_light_t *entity_get_light(unsigned int id) {
  *    @return unsigned int        1 if the component was added, 0 if not.
  */
 unsigned int entity_add_model(unsigned int id, model_t *model) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++) {
         if (_models[i].id == -1) {
             _models[i].id    = id;
@@ -241,7 +241,7 @@ unsigned int entity_add_model(unsigned int id, model_t *model) {
  *    @return e_model_t *    The model component, NULL if not found.
  */
 e_model_t *entity_get_model(unsigned int id) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < MAX_ENTITIES; i++)
         if (_models[i].id == id)
             return &_models[i];

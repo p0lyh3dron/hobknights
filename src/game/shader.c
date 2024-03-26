@@ -37,7 +37,7 @@ void bad_lighting(fragment_t *f, vec4_t *v) {
      *    Loop through all the lights and sum the color values.
      */
     vec3_t color = {0, 0, 0};
-    unsigned long   i;
+    size_t   i;
     for (i = 0; i < MAX_ENTITIES && _light_idxs[i] != nullptr; ++i) {
         /*
          *    Our distance will be squared, so we'll use the distance squared,
@@ -103,8 +103,8 @@ void basic_shader(fragment_t *f, void *v, void *a) {
 void shader_begin(void *cam) {
     _projection = get_camera_view(cam);
 
-    unsigned long i;
-    unsigned long j;
+    size_t i;
+    size_t j;
     for (i = 0, j = 0; i < MAX_ENTITIES; ++i) {
         e_light_t     *light = entity_get_light(i);
         e_transform_t *trans = entity_get_transform(i);
@@ -206,13 +206,39 @@ void basic_v_shader(void *v, void *v0, void *a) {
     vtx->pos.w = m.v[12];
 }
 
+void vtx_scale(void *vd, void *v0, float t) {
+    vertex_t *vdv = (vertex_t *)vd;
+    vertex_t *v0v = (vertex_t *)v0;
+
+    memcpy(&vdv->pos, &v0v->pos, sizeof(vec4_t));
+
+    vdv->tex.x = v0v->tex.x * t;
+    vdv->tex.y = v0v->tex.y * t;
+}
+
+void vtx_add(void *vd, void *v0, void *v1) {
+    vertex_t *vdv = (vertex_t *)vd;
+    vertex_t *v0v = (vertex_t *)v0;
+    vertex_t *v1v = (vertex_t *)v1;
+
+    vdv->pos.x = v0v->pos.x + v1v->pos.x;
+    vdv->pos.y = v0v->pos.y + v1v->pos.y;
+    vdv->pos.z = v0v->pos.z + v1v->pos.z;
+    vdv->pos.w = v0v->pos.w + v1v->pos.w;
+
+    vdv->tex.x = v0v->tex.x + v1v->tex.x;
+    vdv->tex.y = v0v->tex.y + v1v->tex.y;
+}
+
 v_layout_t _v_layout = {
     .attributes =
         {/* Usage, Type, Stride, Offset, Fragment callback.  */
          {V_POS, V_R32G32B32A32_F, sizeof(vec4_t), 0},
          {0, V_R32G32_F, sizeof(vec2u_t), 16}},
-    .count  = 2,
-    .stride = sizeof(vertex_t),
-    .v_fun  = &basic_v_shader,
-    .f_fun  = &basic_shader,
+    .count   = 2,
+    .stride  = sizeof(vertex_t),
+    .v_scale = &vtx_scale,
+    .v_add   = &vtx_add,
+    .v_fun   = &basic_v_shader,
+    .f_fun   = &basic_shader,
 };

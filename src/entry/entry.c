@@ -63,7 +63,7 @@ int main(const int argc, const char **argv) {
 
         if (game != NULL) {
             char path[PATH_MAX_LENGTH];
-            snprintf(path, PATH_MAX_LENGTH, "./%s/bin/lib%s%s", game, game,
+            snprintf(path, PATH_MAX_LENGTH, "./%s/bin/%s%s", game, game,
                      DL_EXTENSION);
 
             d = dl_open(path);

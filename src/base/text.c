@@ -111,17 +111,17 @@ text_t *text_init(const char *text, vec2_t align) {
  *    @param const char *new_text    The text to render.
  */
 void text_update(text_t *text, const char *new_text) {
-    texture_free(text->img);
-
-    image_t *i = text_create(new_text);
-
-    if (i == (image_t *)0x0) {
-        LOGF_ERR("Failed to create text image.");
-        return;
-    }
-
-    mesh_append_asset(text->mesh, i, sizeof(image_t));
-    text->img = i;
+    //texture_free(text->img);
+    //
+    //image_t *i = text_create(new_text);
+    //
+    //if (i == (image_t *)0x0) {
+    //    LOGF_ERR("Failed to create text image.");
+    //    return;
+    //}
+    //
+    //mesh_append_asset(text->mesh, i, sizeof(image_t));
+    //text->img = i;
 }
 
 /*

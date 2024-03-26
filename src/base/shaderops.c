@@ -17,15 +17,15 @@
  *    @param image_t    *asset    The texture to sample.
  */
 void sample_texture(fragment_t *f, vec2_t *uv, image_t *img) {
-    vec2u_t int_uv = {.x = (unsigned int)(fmod(fabs(uv->x), 1.0f) * img->width),
-                      .y = (unsigned int)(fmod(fabs(uv->y), 1.0f) * img->height)};
+    vec2u_t int_uv = {.x = (unsigned int)(uv->x * img->width) % img->width,
+                      .y = (unsigned int)(uv->y * img->height) % img->height};
+    
+    unsigned int pixel;
 
-    f->color.r =
-        ((unsigned char *)img->buf)[(int_uv.x + int_uv.y * img->width) * 4 + 0];
-    f->color.g =
-        ((unsigned char *)img->buf)[(int_uv.x + int_uv.y * img->width) * 4 + 1];
-    f->color.b =
-        ((unsigned char *)img->buf)[(int_uv.x + int_uv.y * img->width) * 4 + 2];
-    f->color.a =
-        ((unsigned char *)img->buf)[(int_uv.x + int_uv.y * img->width) * 4 + 3];
+    memcpy(&pixel, (unsigned char *)img->buf + (int_uv.x + int_uv.y * img->width) * 4, 4);
+
+    f->color.r = pixel & 0xFF;
+    f->color.g = pixel >> 8 & 0xFF;
+    f->color.b = pixel >> 16 & 0xFF;
+    f->color.a = pixel >> 24 & 0xFF;
 }

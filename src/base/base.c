@@ -39,11 +39,11 @@ void *(*mesh_create)(void *) = 0;
 
 void (*mesh_set_vbuffer)(void *, void *) = 0;
 
-void (*mesh_append_asset)(void *, void *, unsigned long) = 0;
+void (*mesh_append_asset)(void *, void *, size_t) = 0;
 
-void (*mesh_set_asset)(void *, void *, unsigned long, unsigned long);
+void (*mesh_set_asset)(void *, void *, size_t, size_t);
 
-void *(*mesh_get_asset)(void *, unsigned long);
+void *(*mesh_get_asset)(void *, size_t);
 
 void (*mesh_draw)(void *) = 0;
 
@@ -64,6 +64,8 @@ void (*set_camera_fov)(void *, float);
 void (*set_camera)(void *);
 
 vec2_t (*get_screen_size)(void) = 0;
+
+void *(*rendertarget_get_backbuffer)(void);
 
 void (*begin_render_group)(void);
 
@@ -121,7 +123,7 @@ unsigned int base_engine_init(const char *modules, ...) {
                                   {nullptr, nullptr, nullptr}};
     shell_register_commands(commands);
 
-    dl_handle_t engine = dl_open("./bin/libchikengine" DL_EXTENSION);
+    dl_handle_t engine = dl_open("./bin/chikengine" DL_EXTENSION);
     if (engine == nullptr) {
         LOGF_ERR("unsigned int base_engine_init( const char *, ... ): Could not load "
                  "engine library.\n");
@@ -154,10 +156,10 @@ unsigned int base_engine_init(const char *modules, ...) {
         return 0;
     }
 
-    if (!engine_init("./bin/libchikengine" DL_EXTENSION,
-                     "./bin/libchikplatform" DL_EXTENSION,
-                     "./bin/libchikaudio" DL_EXTENSION,
-                     "./bin/libchikgfx" DL_EXTENSION, nullptr)) {
+    if (!engine_init("./bin/chikengine" DL_EXTENSION,
+                     "./bin/chikplatform" DL_EXTENSION,
+                     "./bin/chikaudio" DL_EXTENSION,
+                     "./bin/chikgfx" DL_EXTENSION, nullptr)) {
         LOGF_ERR("unsigned int base_engine_init( const char *, ... ): Could not "
                  "initialize engine.\n");
         return 0;
@@ -186,6 +188,7 @@ unsigned int base_engine_init(const char *modules, ...) {
     *(void **)(&set_camera_fov)         = base_load_function("set_camera_fov", &error);
     *(void **)(&set_camera)             = base_load_function("set_camera", &error);
     *(void **)(&get_screen_size)        = base_load_function("get_screen_size", &error);
+    *(void **)(&rendertarget_get_backbuffer) = base_load_function("rendertarget_get_backbuffer", &error);
     *(void **)(&begin_render_group)     = base_load_function("begin_render_group", &error);
 
     *(void **)(&platform_get_event)          = base_load_function("platform_get_event", &error);

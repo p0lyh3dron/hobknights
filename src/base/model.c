@@ -23,7 +23,7 @@ model_t *_model_list[BASE_MODELS_MAX] = {(model_t *)0x0};
  *
  *    @return model_t *      The model.
  */
-model_t *model_create(void *vert, unsigned int size, unsigned int stride,
+model_t *model_create(char *vert, unsigned int size, unsigned int stride,
                           v_layout_t layout) {
     model_t *model = (model_t *)malloc(sizeof(model_t));
 
@@ -46,7 +46,7 @@ model_t *model_create(void *vert, unsigned int size, unsigned int stride,
         return (model_t *)0x0;
     }
 
-    unsigned long i;
+    size_t i;
     for (i = 0; i < layout.count; ++i) {
         if (layout.attributes[i].usage & V_POS) {
             break;
@@ -65,7 +65,7 @@ model_t *model_create(void *vert, unsigned int size, unsigned int stride,
         return (model_t *)0x0;
     }
 
-    unsigned long offset = layout.attributes[i].offset;
+    size_t offset = layout.attributes[i].offset;
 
     for (i = 0; i < size / stride; ++i)
         model->collision_mesh[i] = *(vec3_t *)(vert + i * stride + offset);
@@ -170,7 +170,7 @@ void model_draw(model_t *model) {
  *    @param model_t *model    The model.
  */
 void model_free(model_t *model) {
-    unsigned long i;
+    size_t i;
     for (i = 0; i < BASE_MODELS_MAX; ++i) {
         if (_model_list[i] == model) {
             _model_list[i] = (model_t *)0x0;

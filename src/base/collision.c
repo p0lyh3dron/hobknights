@@ -33,7 +33,7 @@ vec3_t collision_cylinder_plane(vec3_t v_c, float r_c, float h_c, vec3_t v_0, ve
 
     plane_from_points(&p, &v_0, &v_1, &v_2);
 
-    unsigned long i;
+    size_t i;
     for (i = 0; i < CYLINDER_EDGES; ++i) {
         vec2_t dsn;
         /* Shoot rays out from top and bottom of cylinder.  */
@@ -172,11 +172,23 @@ vec3_t collision_cylinder_plane(vec3_t v_c, float r_c, float h_c, vec3_t v_0, ve
 vec3_t collision_cylinder_model(vec3_t v_c, float r_c, float h_c, model_t *m) {
     vec3_t collision = {0, 0, 0};
 
-    unsigned long i;
+    size_t i;
     for (i = 0; i < m->num_collision_verts; i += 3) {
         vec3_t v_0 = m->collision_mesh[i + 0];
         vec3_t v_1 = m->collision_mesh[i + 1];
         vec3_t v_2 = m->collision_mesh[i + 2];
+
+        v_0.y *= -1;
+        v_1.y *= -1;
+        v_2.y *= -1;
+
+        v_0.x *= -1;
+        v_1.x *= -1;
+        v_2.x *= -1;
+
+        v_0.z *= -1;
+        v_1.z *= -1;
+        v_2.z *= -1;
 
         vec3_t n = collision_cylinder_plane(v_c, r_c, h_c, v_0, v_1, v_2);
 

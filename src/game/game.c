@@ -6,6 +6,8 @@
 #include "map.h"
 #include "shader.h"
 
+#include "blade.h"
+
 int _player;
 
 e_transform_t *_player_pos;
@@ -13,11 +15,14 @@ e_camera_t    *_camera;
 e_model_t     *_map;
 e_driveable_t *_player_drive;
 
+e_model_t *_riverhouse;
+
 void *_cam;
 void *_mus;
 
 int _light_1;
 int _light_2;
+
 
 /*
  *    Sets up the game.
@@ -47,6 +52,9 @@ void game_setup(void) {
 
     _light_1 = dev_cube_create(0.05f);
     _light_2 = dev_cube_create(0.1f);
+
+    if (args_has("-riverhouse"))
+        _riverhouse = entity_get_model(dev_riverhouse());
 
     entity_add_light(_light_1, (vec3_t){1.0f, 0.5f, 0.5f}, 200.f);
     entity_add_light(_light_2, (vec3_t){0.5f, 0.5f, 1.0f}, 400.f);
@@ -83,8 +91,12 @@ void game_setup(void) {
     set_camera_fov(_cam, 60.f);
     set_camera(_cam);
 
-    _mus = audio_create_from_file("assets/music/olympic.wav", true);
+    _mus = audio_create_from_file("assets/music/edamame.wav", true);
     audio_play(_mus);
+
+    image_t *bb = *(image_t **)rendertarget_get_backbuffer();
+
+    blade_set_render_target(bb->buf, bb->width, bb->height);
 }
 
 float t = 0.f;
@@ -136,13 +148,14 @@ void game_update(void) {
     set_camera_position(_cam, cam);
     set_camera_direction(_cam, _player_pos->rot);
 
-    audio_set_listener_position(_mus, (vec3_t){0.f, 0.f, 0.f}, _player_pos->pos, _player_pos->rot);
+    audio_set_listener_position(_mus, (vec3_t){5.f, 0.f, 0.f}, _player_pos->pos, _player_pos->rot);
 
     entity_update();
 
     begin_render_group();
 
-    threadpool_wait();
+    //threadpool_wait();
+    //blade_draw_config();
     draw_frame();
 }
 

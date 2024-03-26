@@ -48,10 +48,12 @@ unsigned int rpc_relationship_pass_filter(void                       *spData,
  */
 unsigned int rpc_relationship_snowflake_filter(
     void *spData, struct DiscordRelationship *spRelationship) {
-    discord_t *pApp = (discord_t *)spData;
+    //discord_t *pApp = (discord_t *)spData;
+    //
+    //return (spRelationship->type == DiscordRelationshipType_Friend &&
+    //        spRelationship->user.id < pApp->aUserId);
 
-    return (spRelationship->type == DiscordRelationshipType_Friend &&
-            spRelationship->user.id < pApp->aUserId);
+    return 7;
 }
 
 /*
@@ -60,18 +62,18 @@ unsigned int rpc_relationship_snowflake_filter(
  *    @param void *                 The pApplication data.
  */
 void rpc_update_status(void *spData) {
-    discord_t *pApp = (discord_t *)spData;
-
-    struct DiscordActivity activity;
-    memset(&activity, 0, sizeof(activity));
-    sprintf(activity.details, "CPU has crunched %d frames", 0);
-    sprintf(activity.state, "FPS: %f", 0.f);
-
-    activity.type             = DiscordActivityType_Playing;
-    activity.timestamps.start = 0;
-
-    pApp->apActivities->update_activity(pApp->apActivities, &activity, pApp,
-                                        rpc_update_activity_callback);
+    //discord_t *pApp = (discord_t *)spData;
+    //
+    //struct DiscordActivity activity;
+    //memset(&activity, 0, sizeof(activity));
+    //sprintf(activity.details, "CPU has crunched %d frames", 0);
+    //sprintf(activity.state, "FPS: %f", 0.f);
+    //
+    //activity.type             = DiscordActivityType_Playing;
+    //activity.timestamps.start = 0;
+    //
+    //pApp->apActivities->update_activity(pApp->apActivities, &activity, pApp,
+    //                                    rpc_update_activity_callback);
 }
 
 /*
@@ -127,6 +129,7 @@ discord_t gDiscord;
  *    Initializes the discord RPC.
  */
 void setup_rpc(void) {
+#if 0
     memset(&gDiscord, 0, sizeof(gDiscord));
 
     static struct IDiscordUserEvents uEvents;
@@ -170,9 +173,10 @@ void setup_rpc(void) {
 
     gDiscord.apRelationships =
         gDiscord.apCore->get_relationship_manager(gDiscord.apCore);
+#endif
 }
 
 void update_rpc(void) {
-    DISCORD_REQUIRE(gDiscord.apCore->run_callbacks(gDiscord.apCore));
-    rpc_update_status(&gDiscord);
+    //DISCORD_REQUIRE(gDiscord.apCore->run_callbacks(gDiscord.apCore));
+    //rpc_update_status(&gDiscord);
 }
