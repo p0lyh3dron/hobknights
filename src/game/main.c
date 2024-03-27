@@ -27,7 +27,6 @@ int run(void) {
     game_setup();
 
     while (base_engine_update()) {
-        base_update_engine();
         game_update();
     }
 
