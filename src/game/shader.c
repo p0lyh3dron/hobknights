@@ -30,7 +30,7 @@ vec3_t *_rot = nullptr;
  *    @param fragment_t *f    The fragment to draw to.
  *    @param vec4_t     *v    The vertex position.
  */
-void bad_lighting(fragment_t *f, vec4_t *v) {
+void bad_lighting(vec4_t *f, vec4_t *v) {
     vec4_t worldPos = {.x = v->x * v->w, .y = v->y * v->w, .z = 1 / v->z, .w = 1.f};
 
     /*
@@ -71,10 +71,9 @@ void bad_lighting(fragment_t *f, vec4_t *v) {
     /*
      *    Now we'll calculate the diffuse color.
      */
-    f->color.r *= color.x;
-    f->color.g *= color.y;
-    f->color.b *= color.z;
-    f->color.a = 1;
+    f->x *= color.x;
+    f->y *= color.y;
+    f->z *= color.z;
 }
 
 /*
@@ -84,14 +83,41 @@ void bad_lighting(fragment_t *f, vec4_t *v) {
  *    @param void       *v        The raw vertex data.
  *    @param void       *a        The uniform data.
  */
-void basic_shader(fragment_t *f, void *v, void *a) {
+void basic_shader(fragment_t *f, void *v, void *a, material_t *mat) {
     vertex_t *spVertex = (vertex_t *)v;
-    image_t *img = *(image_t **)mesh_get_asset(a, 0);
 
-    sample_texture(f, &spVertex->tex, img);
+    vec4_t output;
+
+    if (mat->albedo) {
+        color32_t albedo_color = sample_texture(f, &spVertex->tex, mat->albedo);
+        output.x = albedo_color.r / 255.f;
+        output.y = albedo_color.g / 255.f;
+        output.z = albedo_color.b / 255.f;
+        output.w = albedo_color.a / 255.f;
+    }
 
     if (_do_lighting == true)
-        bad_lighting(f, &spVertex->pos);
+        bad_lighting(&output, &spVertex->pos);
+
+    if (mat->ambient_occlusion) {
+        color32_t color = sample_texture(f, &spVertex->tex, mat->ambient_occlusion);
+        output.x *= (color.r / 255.f);
+        output.y *= (color.g / 255.f);
+        output.z *= (color.b / 255.f);
+    }
+    
+    if (mat->emission) {
+        color32_t color = sample_texture(f, &spVertex->tex, mat->emission);
+
+        output.x += (color.r / 255.f);
+        output.y += (color.g / 255.f);
+        output.z += (color.b / 255.f);
+    }
+
+    f->color.r = MIN(255.f, output.x * 255.f);
+    f->color.g = MIN(255.f, output.y * 255.f);
+    f->color.b = MIN(255.f, output.z * 255.f);
+    f->color.a = MIN(255.f, output.w * 255.f);
 }
 
 /*

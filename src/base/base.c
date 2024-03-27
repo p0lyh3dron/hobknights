@@ -45,6 +45,14 @@ void (*mesh_set_asset)(void *, void *, size_t, size_t);
 
 void *(*mesh_get_asset)(void *, size_t);
 
+u32 (*mesh_get_surface_count)(void *);
+
+void (*mesh_set_surface_count)(void *, u32);
+
+void (*mesh_set_surface_buffer_data)(void *, u32, u32, u32);
+
+material_t *(*mesh_get_material)(void *, u32);
+
 void (*mesh_draw)(void *) = 0;
 
 void (*mesh_free)(void *) = 0;
@@ -72,6 +80,8 @@ void (*begin_render_group)(void);
 char *(*platform_get_event)(void) = 0;
 
 vec2u_t (*platform_get_joystick_event)(void) = 0;
+
+void (*platform_set_mouse_capture)(char) = 0;
 
 
 
@@ -178,6 +188,10 @@ unsigned int base_engine_init(const char *modules, ...) {
     *(void **)(&mesh_append_asset)      = base_load_function("mesh_append_asset", &error);
     *(void **)(&mesh_get_asset)         = base_load_function("mesh_get_asset", &error);
     *(void **)(&mesh_set_asset)         = base_load_function("mesh_set_asset", &error);
+    *(void **)(&mesh_get_surface_count)         = base_load_function("mesh_get_surface_count", &error);
+    *(void **)(&mesh_set_surface_count)         = base_load_function("mesh_set_surface_count", &error);
+    *(void **)(&mesh_set_surface_buffer_data)         = base_load_function("mesh_set_surface_buffer_data", &error);
+    *(void **)(&mesh_get_material)         = base_load_function("mesh_get_material", &error);
     *(void **)(&mesh_draw)              = base_load_function("mesh_draw", &error);
     *(void **)(&mesh_free)              = base_load_function("mesh_free", &error);
     *(void **)(&get_camera_view)        = base_load_function("get_camera_view", &error);
@@ -193,6 +207,7 @@ unsigned int base_engine_init(const char *modules, ...) {
 
     *(void **)(&platform_get_event)          = base_load_function("platform_get_event", &error);
     *(void **)(&platform_get_joystick_event) = base_load_function("platform_get_joystick_event", &error);
+    *(void **)(&platform_set_mouse_capture) = base_load_function("platform_set_mouse_capture", &error);
 
     *(void **)(&audio_create_from_file)                 = base_load_function("audio_create_from_file", &error);
     *(void **)(&audio_play)                             = base_load_function("audio_play", &error);

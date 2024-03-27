@@ -102,7 +102,14 @@ model_t *model_create_textured(void *vert, unsigned int size, unsigned int strid
         return (model_t *)0x0;
     }
 
-    mesh_append_asset(model->mesh, (void *)&i, sizeof(image_t *));
+    // mesh_append_asset(model->mesh, (void *)&i, sizeof(image_t *));
+
+    // one material for now
+    mesh_set_surface_count(model->mesh, 1);
+    mesh_set_surface_buffer_data(model->mesh, 0, 0, size / stride);
+
+    material_t* mat = mesh_get_material(model->mesh, 0);
+    mat->albedo = i;
 
     return model;
 }
@@ -150,7 +157,8 @@ unsigned int model_set_mesh_image(model_t *model, image_t *i) {
         return 0;
     }
 
-    mesh_append_asset(model->mesh, (void *)i, sizeof(image_t *));
+    material_t* mat = mesh_get_material(model->mesh, 0);
+    mat->albedo = i;
 
     return 1;
 }

@@ -52,6 +52,14 @@ extern void (*mesh_set_asset)(void *, void *, unsigned long, unsigned long);
 
 extern void *(*mesh_get_asset)(void *, unsigned long);
 
+extern u32 (*mesh_get_surface_count)(void*);
+
+extern void (*mesh_set_surface_count)(void*, u32);
+
+extern void (*mesh_set_surface_buffer_data)(void*, u32, u32, u32);
+
+extern material_t* (*mesh_get_material)(void*, u32);
+
 extern void (*mesh_draw)(void *);
 
 extern void (*mesh_free)(void *);

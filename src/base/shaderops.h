@@ -19,6 +19,6 @@
  *    @param vec2_t     *uv       The UV coordinates to sample.
  *    @param image_t    *asset    The texture to sample.
  */
-void sample_texture(fragment_t *f, vec2_t *uv, image_t *img);
+color32_t sample_texture(fragment_t *f, vec2_t *uv, image_t *img);
 
 #endif /* CHIK_SHADEROPS_H  */

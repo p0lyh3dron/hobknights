@@ -16,7 +16,7 @@
  *    @param vec2_t     *uv       The UV coordinates to sample.
  *    @param image_t    *asset    The texture to sample.
  */
-void sample_texture(fragment_t *f, vec2_t *uv, image_t *img) {
+color32_t sample_texture(fragment_t *f, vec2_t *uv, image_t *img) {
     vec2u_t int_uv = {.x = (unsigned int)(uv->x * img->width) % img->width,
                       .y = (unsigned int)(uv->y * img->height) % img->height};
     
@@ -24,8 +24,11 @@ void sample_texture(fragment_t *f, vec2_t *uv, image_t *img) {
 
     memcpy(&pixel, (unsigned char *)img->buf + (int_uv.x + int_uv.y * img->width) * 4, 4);
 
-    f->color.r = pixel & 0xFF;
-    f->color.g = pixel >> 8 & 0xFF;
-    f->color.b = pixel >> 16 & 0xFF;
-    f->color.a = pixel >> 24 & 0xFF;
+    color32_t color;
+    color.r = pixel & 0xFF;
+    color.g = pixel >> 8 & 0xFF;
+    color.b = pixel >> 16 & 0xFF;
+    color.a = pixel >> 24 & 0xFF;
+
+    return color;
 }
